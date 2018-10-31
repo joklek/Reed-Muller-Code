@@ -81,11 +81,11 @@ public class Matrix {
     }
 
     /**
-     * Cartesian matrix multiplication
+     * kronecker Product matrix
      * @param matrix to be multiplied by
-     * @return new matrix that is the product of cartesian multiplication
+     * @return new matrix that is the product of kroneckerProduct multiplication
      */
-    public Matrix cartesian(Matrix matrix) {
+    public Matrix kroneckerProduct(Matrix matrix) {
         int hostHeight = matrix.getHeight();
         int hostLength = matrix.getLength();
 

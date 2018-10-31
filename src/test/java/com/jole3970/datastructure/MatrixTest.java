@@ -122,7 +122,7 @@ public class MatrixTest {
         Matrix termMatrix = new Matrix(term);
         Matrix sumMatrix = new Matrix(result);
 
-        assertThat(matrix.cartesian(termMatrix), is(sumMatrix));
+        assertThat(matrix.kroneckerProduct(termMatrix), is(sumMatrix));
     }
 
 
