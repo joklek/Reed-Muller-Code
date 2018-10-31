@@ -23,9 +23,9 @@ public class DecoderTest {
     @ParameterizedTest
     @MethodSource("sendAndExpectedWordAndM")
     void shouldDecodeCorrectly(int[] sent, int[] expected, int m) {
-        Decoder decoder = new Decoder(m);
+        Decoder decoder = new Decoder();
         boolean[] sentBoolified = BooleanUtils.boolArrayFromIntArray(sent);
-        boolean[] decoded = decoder.decode(sentBoolified);
+        boolean[] decoded = decoder.decode(sentBoolified, m);
         int[] decodedUnboolified = BooleanUtils.intArrayFromBoolArray(decoded);
         assertThat(decodedUnboolified, is(expected));
     }

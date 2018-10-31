@@ -23,8 +23,10 @@ public class EncoderTest {
     @ParameterizedTest
     @MethodSource("wordEndExpectedEncoded")
     void shouldDecodeCorrectly(int[] word, int[] expected, int m) {
-        Encoder encoder = new Encoder(m);
-        boolean[] encoded = encoder.encode(word);
+        ReedMullerCodeGenerator generator = new ReedMullerCodeGenerator(); // No idea how and why to mock this, I guess this is an integration test then
+
+        Encoder encoder = new Encoder(generator);
+        boolean[] encoded = encoder.encode(word, m);
         int[] encodedUnboolified = BooleanUtils.intArrayFromBoolArray(encoded);
         assertThat(encodedUnboolified, is(expected));
     }

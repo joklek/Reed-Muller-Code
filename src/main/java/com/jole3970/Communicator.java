@@ -10,19 +10,24 @@ import java.util.stream.Stream;
 
 public class Communicator {
 
-    private Channel channel = new Channel();
+    private final Channel channel;
+    private final Encoder encoder;
+    private final Decoder decoder;
+
+    public Communicator(Channel channel, Encoder encoder, Decoder decoder) {
+        this.channel = channel;
+        this.encoder = encoder;
+        this.decoder = decoder;
+    }
 
     public byte[] transmitAndReceiveBytes(byte[] bytes, int m, double errorRate) {
-        Encoder encoder = new Encoder(m);
-        Decoder decoder = new Decoder(m);
-
         List<Boolean> listOfBools = getAsBits(bytes);
 
         Stream<Object> bitStream = getBitStream(listOfBools, m);
         List<Boolean> decodedBools = bitStream
-                .map(vector -> encoder.encode((boolean[]) vector))
+                .map(vector -> encoder.encode((boolean[]) vector, m))
                 .map(encoded -> channel.sendThroughChannel(encoded, errorRate))
-                .map(channelized -> decoder.decode(channelized))
+                .map(channelized -> decoder.decode(channelized, m))
                 .map(decoded -> BooleanUtils.boxArray(decoded))
                 .flatMap(decoded -> Arrays.stream(decoded))
                 .collect(Collectors.toList());

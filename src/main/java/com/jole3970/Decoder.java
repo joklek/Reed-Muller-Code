@@ -2,6 +2,7 @@ package com.jole3970;
 
 import com.jole3970.datastructure.BooleanUtils;
 import com.jole3970.datastructure.Matrix;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,16 +14,12 @@ public class Decoder {
 
     private final Matrix hMatrix;
     private final Map<Integer, Matrix> iMatrices;
-    private final Map<Integer, Matrix> hMatrices;
+    private final Map<Pair<Integer, Integer>, Matrix> hMatrices;
 
-    private final int m;
-    public Decoder(int m) {
-        this.m = m;
-
+    public Decoder() {
         hMatrix = new Matrix(new int[][]{{1, 1}, {1, -1}});
-        int iMatrixCount =  (int) pow(2, m-1);
-        iMatrices = new HashMap<>(iMatrixCount);
-        hMatrices = new HashMap<>(3);
+        iMatrices = new HashMap<>();
+        hMatrices = new HashMap<>();
     }
 
     /**
@@ -30,13 +27,13 @@ public class Decoder {
      * @param vector unknown coded vector
      * @return decoded vector
      */
-    public boolean[] decode(boolean[] vector) {
+    public boolean[] decode(boolean[] vector, int m) {
         int[] integers = BooleanUtils.intArrayFromBoolArray(vector);
 
         int[] vectorSwitched = switchZeroToMinusOne(integers);
         Matrix previousW = new Matrix(new int[][]{vectorSwitched});
         for(int i = 1; i <= m; i++) {
-            previousW = generateHMatrix(i).multiply(previousW.transpose()).transpose();
+            previousW = generateHMatrix(i, m).multiply(previousW.transpose()).transpose();
         }
 
         int[] multipliedResult = previousW.getData()[0];
@@ -48,7 +45,7 @@ public class Decoder {
         int length =  m + 1;
         int pos = find(multipliedResult, number);
 
-        int[] binaryFormReversed = getBinaryFormReversed(pos);
+        int[] binaryFormReversed = getBinaryFormReversed(pos, m);
         int[] result = new int[length];
         result[0] = sign;
         System.arraycopy(binaryFormReversed, 0, result, 1, binaryFormReversed.length);
@@ -56,7 +53,7 @@ public class Decoder {
         return BooleanUtils.boolArrayFromIntArray(result);
     }
 
-    private int[] getBinaryFormReversed(int pos) {
+    private int[] getBinaryFormReversed(int pos, int m) {
         StringBuilder binaryRepresentation = new StringBuilder(Integer.toBinaryString(pos));
         int[] array = new int[m];
 
@@ -86,8 +83,9 @@ public class Decoder {
         return switched;
     }
 
-    private Matrix generateHMatrix(int i) {
-        return hMatrices.computeIfAbsent(i, key -> {
+    private Matrix generateHMatrix(int i, int m) {
+        Pair<Integer, Integer> pair = Pair.of(m, i);
+        return hMatrices.computeIfAbsent(pair, key -> {
             int powerOfI =  (int) pow(2, m-i);
             int powerOfI2 =  (int) pow(2, i-1);
             return generateIMatrix(powerOfI)
