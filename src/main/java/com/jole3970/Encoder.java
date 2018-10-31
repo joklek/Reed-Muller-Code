@@ -2,20 +2,31 @@ package com.jole3970;
 
 import com.jole3970.datastructure.Matrix;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class Encoder {
-    public int[] encode(int[] vector) {
+    public boolean[] encode(int[] vector) {
         Matrix multiplied = ReedMullerCodeGenerator.generateGenerativeMatrixForM(3).transpose()
                 .multiply(new Matrix(new int[][]{vector}).transpose()).transpose();
-        return sanitizeData(multiplied, 2).getData()[0];
+        return toBitArray(multiplied.getData()[0]);
     }
 
-    private Matrix sanitizeData(Matrix matrix, int base) {
-        Matrix newMatrix = new Matrix(matrix.getHeight(), matrix.getLength());
-        for(int i = 0; i < matrix.getHeight(); i++) {
-            for(int j = 0; j < matrix.getLength(); j++) {
-                newMatrix.getData()[i][j] = matrix.getData()[i][j] % base;
-            }
+    private boolean[] toBitArray(int[] array) {
+        Stream<Integer> boxed = Arrays.stream(array)
+                .map(x -> x % 2).boxed();
+        List<Boolean> boolList = boxed.map(x -> x == 1).collect(Collectors.toList());
+        return toPrimitiveArray(boolList);
+    }
+
+    private boolean[] toPrimitiveArray(final List<Boolean> booleanList) {
+        final boolean[] primitives = new boolean[booleanList.size()];
+        int index = 0;
+        for (Boolean object : booleanList) {
+            primitives[index++] = object;
         }
-        return newMatrix;
+        return primitives;
     }
 }
