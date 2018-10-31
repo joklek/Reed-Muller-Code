@@ -22,8 +22,13 @@ public class Communicator {
 
     public byte[] transmitAndReceiveBytes(byte[] bytes, int m, double errorRate) {
         List<Boolean> listOfBools = getAsBits(bytes);
+        List<Boolean> decodedBools = transmitAndReceiveBits(listOfBools, m, errorRate);
+        return getBytes(decodedBools);
+    }
 
-        Stream<Object> bitStream = getBitStream(listOfBools, m);
+    public List<Boolean> transmitAndReceiveBits(List<Boolean> bits, int m, double errorRate) {
+        int originalSize = bits.size();
+        Stream<Object> bitStream = getBitStream(bits, m);
         List<Boolean> decodedBools = bitStream
                 .map(vector -> encoder.encode((boolean[]) vector, m))
                 .map(encoded -> channel.sendThroughChannel(encoded, errorRate))
@@ -32,7 +37,7 @@ public class Communicator {
                 .flatMap(decoded -> Arrays.stream(decoded))
                 .collect(Collectors.toList());
 
-        return getBytes(decodedBools);
+        return decodedBools.subList(0, originalSize);
     }
 
     private Stream<Object> getBitStream(List<Boolean> bits, int m) {
@@ -50,7 +55,6 @@ public class Communicator {
             }
             streamBuilder.add(BooleanUtils.listToArray(sublist));
         }
-
 
         return streamBuilder.build();
     }
