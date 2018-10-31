@@ -9,6 +9,10 @@ public class ReedMullerCodeGenerator {
     private ReedMullerCodeGenerator() {
     }
 
+    /**
+     * Generates generative Reed-Muller code matrix for given m
+     * @return Generative matrix
+     */
     public static Matrix generateGenerativeMatrixForM(int m) {
         int height = m + 1;
         int length =  (int) pow(2, m);

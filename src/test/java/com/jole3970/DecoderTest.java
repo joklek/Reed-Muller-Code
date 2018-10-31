@@ -22,7 +22,7 @@ public class DecoderTest {
     }
     @ParameterizedTest
     @MethodSource("sendAndExpectedWordAndM")
-    void name(int[] sent, int[] expected, int m) {
+    void shouldDecodeCorrectly(int[] sent, int[] expected, int m) {
         Decoder decoder = new Decoder(m);
         boolean[] sentBoolified = BooleanUtils.boolArrayFromIntArray(sent);
         boolean[] decoded = decoder.decode(sentBoolified);

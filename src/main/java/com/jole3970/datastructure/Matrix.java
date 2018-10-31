@@ -66,21 +66,6 @@ public class Matrix {
     }
 
     /**
-     * Scalar matrix multiplication
-     * @param multiplier by which each cell should be multiplied
-     * @return new matrix that is multiplied by given multiplier
-     */
-    public Matrix multiply(int multiplier) {
-        Matrix newMatrix = new Matrix(height, length);
-        for (int i = 0; i < newMatrix.getHeight(); i++) {
-            for (int j = 0; j < newMatrix.getLength(); j++) {
-                newMatrix.getData()[i][j] *= multiplier;
-            }
-        }
-        return newMatrix;
-    }
-
-    /**
      * kronecker Product matrix
      * @param matrix to be multiplied by
      * @return new matrix that is the product of kroneckerProduct multiplication
