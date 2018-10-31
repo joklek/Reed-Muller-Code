@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class Matrix {
-    private final int height;
-    private final int length;
-    private final int[][] data;
+    protected final int height;
+    protected final int length;
+    protected final int[][] data;
 
     public Matrix(int height, int length) {
         this.height = height;
@@ -36,26 +36,6 @@ public class Matrix {
         return length;
     }
 
-    public int get(int line, int column) {
-        if (line >= height || line < 0) {
-            throw new IndexOutOfBoundsException(String.format("Illegal X of '%d' when it should be [0, %d)", line, height));
-        }
-        if (column >= length || column < 0) {
-            throw new IndexOutOfBoundsException(String.format("Illegal Y of '%d' when it should be [0, %d)", column, length));
-        }
-        return data[line][column];
-    }
-
-    public void set(int line, int column, int value) {
-        if (line >= height || line < 0) {
-            throw new IndexOutOfBoundsException(String.format("Illegal X of '%d' when it should be [0, %d)", line, height));
-        }
-        if (column >= length || column < 0) {
-            throw new IndexOutOfBoundsException(String.format("Illegal Y of '%d' when it should be [0, %d)", column, length));
-        }
-        data[line][column] = value;
-    }
-
     public Matrix multiply(Matrix matrixToMultiplyBy) {
         if (length != matrixToMultiplyBy.getHeight()) {
             throw new IllegalStateException("Matrix dimensions don't match. Length of multiplied matrix should be equal to the multiplier matrix height");
@@ -64,7 +44,7 @@ public class Matrix {
         for (int i = 0; i < newMatrix.getHeight(); i++)
             for (int j = 0; j < newMatrix.getLength(); j++)
                 for (int k = 0; k < length; k++)
-                    newMatrix.data[i][j] += (data[i][k] * matrixToMultiplyBy.get(k,j));
+                    newMatrix.data[i][j] += (data[i][k] * matrixToMultiplyBy.getData()[k][j]);
         return newMatrix;
     }
 
@@ -77,8 +57,7 @@ public class Matrix {
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < length; j++) {
-                int value = get(i, j) + matrixToAdd.get(i, j);
-                newMatrix.set(i, j, value);
+                newMatrix.getData()[i][j] += data[i][j] + matrixToAdd.getData()[i][j];
             }
         }
         return newMatrix;

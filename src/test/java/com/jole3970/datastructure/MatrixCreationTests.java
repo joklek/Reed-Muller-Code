@@ -31,7 +31,7 @@ public class MatrixCreationTests {
         assertThat(matrix.getLength(), is(length));
         for(int i = 0; i < height; i++) {
             for(int j = 0; j < length; j++) {
-                assertThat(matrix.get(i, j), is(0));
+                assertThat(matrix.getData()[i][j], is(0));
             }
         }
     }
@@ -52,7 +52,7 @@ public class MatrixCreationTests {
         assertThat(matrix.getHeight() * matrix.getLength(), is(ints.length));
         for(int i = 0; i < matrix.getHeight(); i++) {
             for(int j = 0; j < matrix.getLength(); j++) {
-                assertThat(matrix.get(i, j), is(ints[i*matrix.getLength() + j]));
+                assertThat(matrix.getData()[i][j], is(ints[i*matrix.getLength() + j]));
             }
         }
     }
@@ -116,7 +116,7 @@ public class MatrixCreationTests {
         Matrix matrix = new Matrix(height, length);
         for(int i = 0; i < height; i++) {
             for(int j = 0; j < length; j++) {
-                assertThat(matrix.get(i, j), is(0));
+                assertThat(matrix.getData()[i][j], is(0));
             }
         }
     }
