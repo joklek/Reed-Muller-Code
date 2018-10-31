@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class EncoderTest {
-    
+
     private static Stream<Arguments> wordEndExpectedEncoded() {
         return Stream.of(
                 arguments(new int[]{0, 0, 0, 1}, new int[]{0, 0, 0, 0, 1, 1, 1, 1}, 3),

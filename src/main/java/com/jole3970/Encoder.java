@@ -15,4 +15,9 @@ public class Encoder {
                 .multiply(new Matrix(new int[][]{vector}).transpose()).transpose();
         return BooleanUtils.boolArrayFromIntArray(multiplied.getData()[0]);
     }
+
+    public boolean[] encode(boolean[] vector) {
+        int[] converted = BooleanUtils.intArrayFromBoolArray(vector);
+        return encode(converted);
+    }
 }
