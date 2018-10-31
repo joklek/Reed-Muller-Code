@@ -13,7 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-public class MatrixCreationTests {
+public class MatrixTest {
 
     private static Stream<Arguments> arraysAndExpectedSizes() {
         return Stream.of(
@@ -22,7 +22,6 @@ public class MatrixCreationTests {
                 arguments(new int[][]{{0, 0}}, 1, 2)
         );
     }
-
     @ParameterizedTest
     @MethodSource("arraysAndExpectedSizes")
     void shouldCreateCorrectMatrixSizeFromArray(int[][] array, int height, int length) {
@@ -74,6 +73,7 @@ public class MatrixCreationTests {
         assertThat(matrix.transpose(), Matchers.equalTo(transposedExpected));
     }
 
+
     private static Stream<Arguments> matrixTermAndSum() {
         return Stream.of(
                 arguments(new int[][]{{1}}, new int[][]{{2}}, new int[][]{{3}}),
@@ -106,6 +106,23 @@ public class MatrixCreationTests {
         Matrix sumMatrix = new Matrix(result);
 
         assertThat(matrix.multiply(termMatrix), is(sumMatrix));
+    }
+
+
+    private static Stream<Arguments> matrixCartesianMultiplierAndResult() {
+        return Stream.of(
+                arguments(new int[][]{{1, 1}, {1, -1}}, new int[][]{{1, 0}, {0, 1}}, new int[][]{{1, 0, 1, 0}, {0 , 1, 0 ,1}, {1, 0 , -1, 0}, {0, 1, 0, -1}}),
+                arguments(new int[][]{{1, 0}, {0, 1}}, new int[][]{{1, 1}, {1, -1}}, new int[][]{{1, 1, 0, 0}, {1 , -1, 0 ,0}, {0, 0 , 1, 1}, {0, 0, 1, -1}})
+        );
+    }
+    @ParameterizedTest
+    @MethodSource("matrixCartesianMultiplierAndResult")
+    void shouldCartesianMultiplyCorrectly(int[][] array, int[][] term, int[][] result) {
+        Matrix matrix = new Matrix(array);
+        Matrix termMatrix = new Matrix(term);
+        Matrix sumMatrix = new Matrix(result);
+
+        assertThat(matrix.cartesian(termMatrix), is(sumMatrix));
     }
 
 
