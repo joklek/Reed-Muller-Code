@@ -30,3 +30,19 @@ if no valid flags are entered after the required arguments, all the text is fed 
 #### Optional (only one can be used per command)
 * -f <FILE_NAME>, e.g. "-f test.txt". This give program the file and outputs it with ".out" extension.
 * -b <binary vector representation> "-b 01010001111". This prints out the binary representation of the decoded vector
+
+#### Examples
+To run program on input text you could write
+```
+> runReedMuller -m 4 -e 0.1 This is my text
+```
+
+To run on a chosen file
+```
+> runReedMuller -m 4 -e 0.1 myFile.txt
+```
+
+To run on a binary vector
+```
+> runReedMuller -m 3 -e 0.1 -b 01010101111
+```
