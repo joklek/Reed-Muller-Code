@@ -45,4 +45,31 @@ public final class BooleanUtils {
 
     public static final Collector<Boolean, ?, boolean[]> TO_BOOLEAN_ARRAY
             = Collectors.collectingAndThen(Collectors.toList(), BooleanUtils::listToArray);
+
+    public static boolean[] getAsBits(byte[] bytes) {
+        boolean[] bools = new boolean[bytes.length*8];
+
+        for (int i = 0; i < bytes.length; i++) {
+            int val = bytes[i];
+            for (int j = 0; j < 8; j++) {
+                bools[i*8 + j] = ((val & 128) != 0);
+                val <<= 1;
+            }
+        }
+        return bools;
+    }
+
+    public static byte[] getBytes(boolean[] decodedBools) {
+        int usableSize = decodedBools.length - decodedBools.length % 8;
+        byte[] returnedBytes = new byte[usableSize/8];
+        for(int i = 0; i*8 < usableSize; i++) {
+            byte val = 0;
+            for(int j = 0; j < 8; j++) {
+                val <<= 1;
+                val += decodedBools[i*8 + j] ? 1 : 0;
+            }
+            returnedBytes[i] = val;
+        }
+        return returnedBytes;
+    }
 }

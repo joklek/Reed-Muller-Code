@@ -1,5 +1,6 @@
 package com.joklek.datastructure;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -41,5 +42,22 @@ public class BooleanUtilsTest {
     void shouldConvertFromBitsCorrectly(boolean[] intArr, int[] expected) {
         int[] result = BooleanUtils.intArrayFromBoolArray(intArr);
         assertThat(result, is(expected));
+    }
+
+
+    @Test
+    void shouldGetCorrectBits() {
+        byte[] bytes = new byte[]{1};
+        boolean[] bools = new boolean[]{false, false, false, false, false, false, false, true};
+        boolean[] collected = BooleanUtils.getAsBits(bytes);
+        assertThat(collected, is(bools));
+    }
+
+    @Test
+    void shouldGetCorrectBytes() {
+        byte[] bytes = new byte[]{3};
+        boolean[] bools = new boolean[]{false, false, false, false, false, false, true, true};
+        byte[] collected = BooleanUtils.getBytes(bools);
+        assertThat(collected, is(bytes));
     }
 }

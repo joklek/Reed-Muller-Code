@@ -1,5 +1,8 @@
-package com.joklek;
+package com.joklek.communicator;
 
+import com.joklek.Channel;
+import com.joklek.Decoder;
+import com.joklek.Encoder;
 import com.joklek.datastructure.BooleanUtils;
 
 import java.util.Arrays;
@@ -7,25 +10,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Communicator {
+public class CodedCommunicator implements Communicator {
 
     private final Channel channel;
     private final Encoder encoder;
     private final Decoder decoder;
 
-    public Communicator(Channel channel, Encoder encoder, Decoder decoder) {
+    public CodedCommunicator(Channel channel, Encoder encoder, Decoder decoder) {
         this.channel = channel;
         this.encoder = encoder;
         this.decoder = decoder;
     }
 
-    public byte[] transmitAndReceiveBytes(byte[] bytes, int m, double errorRate) {
-        boolean[] listOfBools = getAsBits(bytes);
-        boolean[] decodedBools = transmitAndReceiveBits(listOfBools, m, errorRate);
-        return getBytes(decodedBools);
+    public byte[] transmitAndReceiveCodedBytes(byte[] bytes, int m, double errorRate) {
+        boolean[] listOfBools = BooleanUtils.getAsBits(bytes);
+        boolean[] decodedBools = transmitAndReceiveCodedBits(listOfBools, m, errorRate);
+        return BooleanUtils.getBytes(decodedBools);
     }
 
-    public boolean[] transmitAndReceiveBits(boolean[] bits, int m, double errorRate) {
+    public boolean[] transmitAndReceiveCodedBits(boolean[] bits, int m, double errorRate) {
         int originalSize = bits.length;
         Stream<Object> bitStream = getBitStream(bits, m);
         List<Boolean> decodedBools = bitStream
@@ -49,32 +52,5 @@ public class Communicator {
         }
 
         return streamBuilder.build();
-    }
-
-    protected boolean[] getAsBits(byte[] bytes) {
-        boolean[] bools = new boolean[bytes.length*8];
-
-        for (int i = 0; i < bytes.length; i++) {
-            int val = bytes[i];
-            for (int j = 0; j < 8; j++) {
-                bools[i*8 + j] = ((val & 128) != 0);
-                val <<= 1;
-            }
-        }
-        return bools;
-    }
-
-    protected byte[] getBytes(boolean[] decodedBools) {
-        int usableSize = decodedBools.length - decodedBools.length % 8;
-        byte[] returnedBytes = new byte[usableSize/8];
-        for(int i = 0; i*8 < usableSize; i++) {
-            byte val = 0;
-            for(int j = 0; j < 8; j++) {
-                val <<= 1;
-                val += decodedBools[i*8 + j] ? 1 : 0;
-            }
-            returnedBytes[i] = val;
-        }
-        return returnedBytes;
     }
 }

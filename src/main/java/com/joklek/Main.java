@@ -1,5 +1,8 @@
 package com.joklek;
 
+import com.joklek.communicator.CodedCommunicator;
+import com.joklek.communicator.Communicator;
+import com.joklek.communicator.UncodedCommunicator;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -13,7 +16,8 @@ public class Main {
     private static List<String> argumentFlags = Arrays.asList("-f", "-b", "-m", "-e");
 
     public static void main(String[] args) throws IOException {
-        Communicator communicator = new Communicator(new Channel(), new Encoder(new ReedMullerCodeGenerator()), new Decoder());
+        Communicator codedCommunicator = new CodedCommunicator(new Channel(), new Encoder(new ReedMullerCodeGenerator()), new Decoder());
+        Communicator uncodedCommunicator = new UncodedCommunicator(new Channel());
 
         Map<String, String> arguments = collectArgumentMap(args);
         if (arguments == null) {
@@ -36,7 +40,7 @@ public class Main {
             String sourcePath = arguments.get("-f");
             File fi = new File(sourcePath);
             byte[] fileContent = Files.readAllBytes(fi.toPath());
-            byte[] receiveBytes = communicator.transmitAndReceiveBytes(fileContent, m, errorRate);
+            byte[] receiveBytes = codedCommunicator.transmitAndReceiveCodedBytes(fileContent, m, errorRate);
             try (OutputStream out = new BufferedOutputStream(new FileOutputStream(sourcePath + ".out"))) {
                 out.write(receiveBytes);
             }
@@ -48,7 +52,7 @@ public class Main {
                 for(int i = 0; i < input.length(); i++) {
                     vector[i] = input.charAt(i) == '1';
                 }
-                boolean[] decoded = communicator.transmitAndReceiveBits(vector, m, errorRate);
+                boolean[] decoded = codedCommunicator.transmitAndReceiveCodedBits(vector, m, errorRate);
                 for (Boolean aDecoded : decoded) {
                     System.out.print(aDecoded ? 1 : 0);
                 }
@@ -56,7 +60,7 @@ public class Main {
             }
         }
         else {
-            byte[] decoded = communicator.transmitAndReceiveBytes(arguments.get("args").getBytes(), m, errorRate);
+            byte[] decoded = codedCommunicator.transmitAndReceiveCodedBytes(arguments.get("args").getBytes(), m, errorRate);
             System.out.println(new String(decoded));
         }
     }
