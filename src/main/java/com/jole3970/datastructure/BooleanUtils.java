@@ -35,9 +35,6 @@ public final class BooleanUtils {
         return arr;
     }
 
-    public static final Collector<Boolean, ?, boolean[]> TO_BOOLEAN_ARRAY
-            = Collectors.collectingAndThen(Collectors.toList(), BooleanUtils::listToArray);
-
     public static Boolean[] boxArray(boolean[] unboxed) {
         Boolean[] boxed = new Boolean[unboxed.length];
         for(int i = 0; i< unboxed.length; i++) {
@@ -45,4 +42,7 @@ public final class BooleanUtils {
         }
         return boxed;
     }
+
+    public static final Collector<Boolean, ?, boolean[]> TO_BOOLEAN_ARRAY
+            = Collectors.collectingAndThen(Collectors.toList(), BooleanUtils::listToArray);
 }

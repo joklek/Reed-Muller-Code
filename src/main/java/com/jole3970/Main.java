@@ -14,6 +14,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Communicator communicator = new Communicator(new Channel(), new Encoder(new ReedMullerCodeGenerator()), new Decoder());
 
+        if(args.length < 5) {
+            System.out.println("Not enough arguments. Example arguments '-m 4 -e 0.1 hello'");
+            return;
+        }
         Map<String, String> arguments = parseArgs(args);
 
         if(arguments.size() < 3) {
@@ -44,7 +48,7 @@ public class Main {
             byte[] receiveBytes = communicator.transmitAndReceiveBytes(fileContent, m, errorRate);
             OutputStream out = null;
             try {
-                out = new BufferedOutputStream(new FileOutputStream(sourcePath + ".jpg"));
+                out = new BufferedOutputStream(new FileOutputStream(sourcePath + ".out"));
                 out.write(receiveBytes);
             } finally {
                 if (out != null) out.close();
@@ -53,11 +57,11 @@ public class Main {
         else if(arguments.containsKey("-b")) {
             String input = arguments.get("-b");
             if(Pattern.matches("^[0,1]+$", input)) {
-                List<Boolean> vector = new ArrayList(input.length());
+                boolean[] vector = new boolean[input.length()];
                 for(int i = 0; i < input.length(); i++) {
-                    vector.add(input.charAt(i) == '1');
+                    vector[i] = input.charAt(i) == '1';
                 }
-                List<Boolean> decoded = communicator.transmitAndReceiveBits(vector, m, errorRate);
+                boolean[] decoded = communicator.transmitAndReceiveBits(vector, m, errorRate);
                 for (Boolean aDecoded : decoded) {
                     System.out.print(aDecoded ? 1 : 0);
                 }

@@ -2,7 +2,6 @@ package com.jole3970;
 
 import com.jole3970.datastructure.BooleanUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,13 +20,13 @@ public class Communicator {
     }
 
     public byte[] transmitAndReceiveBytes(byte[] bytes, int m, double errorRate) {
-        List<Boolean> listOfBools = getAsBits(bytes);
-        List<Boolean> decodedBools = transmitAndReceiveBits(listOfBools, m, errorRate);
+        boolean[] listOfBools = getAsBits(bytes);
+        boolean[] decodedBools = transmitAndReceiveBits(listOfBools, m, errorRate);
         return getBytes(decodedBools);
     }
 
-    public List<Boolean> transmitAndReceiveBits(List<Boolean> bits, int m, double errorRate) {
-        int originalSize = bits.size();
+    public boolean[] transmitAndReceiveBits(boolean[] bits, int m, double errorRate) {
+        int originalSize = bits.length;
         Stream<Object> bitStream = getBitStream(bits, m);
         List<Boolean> decodedBools = bitStream
                 .map(vector -> encoder.encode((boolean[]) vector, m))
@@ -36,50 +35,43 @@ public class Communicator {
                 .map(decoded -> BooleanUtils.boxArray(decoded))
                 .flatMap(decoded -> Arrays.stream(decoded))
                 .collect(Collectors.toList());
-
-        return decodedBools.subList(0, originalSize);
+        return BooleanUtils.listToArray(decodedBools.subList(0, originalSize));
     }
 
-    private Stream<Object> getBitStream(List<Boolean> bits, int m) {
+    protected Stream<Object> getBitStream(boolean[] bits, int m) {
         Stream.Builder<Object> streamBuilder = Stream.builder();
-        for (int i = 0; i < bits.size(); i+= m+1) {
-            List<Boolean> sublist;
-            if ( i + m + 1 < bits.size() ) {
-                sublist = bits.subList(i, i + m + 1);
-            }
-            else {
-                sublist = bits.subList(i, bits.size());
-                while (sublist.size() <= m) {
-                    sublist.add(false);
-                }
-            }
-            streamBuilder.add(BooleanUtils.listToArray(sublist));
+        for (int i = 0; i < bits.length; i+= m+1) {
+            boolean[] bools = new boolean[m+1];
+            int length = i + m + 1 > bits.length ? bits.length - i : m+1;
+            System.arraycopy(bits, i, bools, 0, length);
+
+            streamBuilder.add(bools);
         }
 
         return streamBuilder.build();
     }
 
-    private List<Boolean> getAsBits(byte[] bytes) {
-        List<Boolean> listOfBools = new ArrayList<>();
+    protected boolean[] getAsBits(byte[] bytes) {
+        boolean[] bools = new boolean[bytes.length*8];
 
-        for (byte b : bytes) {
-            int val = b;
-            for (int i = 0; i < 8; i++) {
-                listOfBools.add((val & 128) != 0);
+        for (int i = 0; i < bytes.length; i++) {
+            int val = bytes[i];
+            for (int j = 0; j < 8; j++) {
+                bools[i*8 + j] = ((val & 128) != 0);
                 val <<= 1;
             }
         }
-        return listOfBools;
+        return bools;
     }
 
-    private byte[] getBytes(List<Boolean> decodedBools) {
-        int usableSize = decodedBools.size() - decodedBools.size() % 8;
+    protected byte[] getBytes(boolean[] decodedBools) {
+        int usableSize = decodedBools.length - decodedBools.length % 8;
         byte[] returnedBytes = new byte[usableSize/8];
         for(int i = 0; i*8 < usableSize; i++) {
             byte val = 0;
             for(int j = 0; j < 8; j++) {
                 val <<= 1;
-                val += decodedBools.get(i*8 + j) ? 1 : 0;
+                val += decodedBools[i*8 + j] ? 1 : 0;
             }
             returnedBytes[i] = val;
         }
