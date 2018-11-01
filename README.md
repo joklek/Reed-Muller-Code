@@ -39,7 +39,7 @@ To run program on input text you could write
 
 To run on a chosen file
 ```
-> runReedMuller -m 4 -e 0.1 myFile.txt
+> runReedMuller -m 4 -e 0.1 -f myFile.txt
 ```
 
 To run on a binary vector
