@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("squid:S106")
 public class Main {
 
     private static List<String> argumentFlags = Arrays.asList("-f", "-b", "-m", "-e");
@@ -14,18 +15,8 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Communicator communicator = new Communicator(new Channel(), new Encoder(new ReedMullerCodeGenerator()), new Decoder());
 
-        if(args.length < 5) {
-            System.out.println("Not enough arguments. Example arguments '-m 4 -e 0.1 hello'");
-            return;
-        }
-        Map<String, String> arguments = parseArgs(args);
-
-        if(arguments.size() < 3) {
-            System.out.println("Not enough arguments, should contain -m and -e flags and something to encode");
-            return;
-        }
-        if(!arguments.containsKey("-m") || !arguments.containsKey("-e")) {
-            System.out.println("Should contain -m and -e flags");
+        Map<String, String> arguments = collectArgumentMap(args);
+        if (arguments == null) {
             return;
         }
 
@@ -46,12 +37,8 @@ public class Main {
             File fi = new File(sourcePath);
             byte[] fileContent = Files.readAllBytes(fi.toPath());
             byte[] receiveBytes = communicator.transmitAndReceiveBytes(fileContent, m, errorRate);
-            OutputStream out = null;
-            try {
-                out = new BufferedOutputStream(new FileOutputStream(sourcePath + ".out"));
+            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(sourcePath + ".out"))) {
                 out.write(receiveBytes);
-            } finally {
-                if (out != null) out.close();
             }
         }
         else if(arguments.containsKey("-b")) {
@@ -72,6 +59,24 @@ public class Main {
             byte[] decoded = communicator.transmitAndReceiveBytes(arguments.get("args").getBytes(), m, errorRate);
             System.out.println(new String(decoded));
         }
+    }
+
+    private static Map<String, String> collectArgumentMap(String[] args) {
+        if(args.length < 5) {
+            System.out.println("Not enough arguments. Example arguments '-m 4 -e 0.1 hello'");
+            return null;
+        }
+        Map<String, String> arguments = parseArgs(args);
+
+        if(arguments.size() < 3) {
+            System.out.println("Not enough arguments, should contain -m and -e flags and something to encode");
+            return null;
+        }
+        if(!arguments.containsKey("-m") || !arguments.containsKey("-e")) {
+            System.out.println("Should contain -m and -e flags");
+            return null;
+        }
+        return arguments;
     }
 
     private static Map<String, String> parseArgs(String[] args) {
