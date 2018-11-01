@@ -3,7 +3,6 @@ package com.joklek.communicator;
 import com.joklek.Channel;
 import com.joklek.Decoder;
 import com.joklek.Encoder;
-import com.joklek.communicator.CodedCommunicator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -34,13 +33,13 @@ public class CodedCommunicatorTest {
 
     @Test
     void shouldGetCorrectBitStream() {
-
-        CodedCommunicator communicator = new CodedCommunicator(channel, encoder, decoder);
+        int m = 2;
+        CodedCommunicator communicator = new CodedCommunicator(channel, encoder, decoder, m);
 
         boolean[] bools = new boolean[]{false, true, false, true};
         boolean[] bools1 = new boolean[]{false, true, false};
         boolean[] bools2 = new boolean[]{true, false, false};
-        int m = 2;
+
         List<Object> collected = communicator.getBitStream(bools, m)
                 .collect(Collectors.toList());
         assertThat(((boolean[])collected.get(0)).length, is(m + 1));
@@ -50,12 +49,13 @@ public class CodedCommunicatorTest {
 
     @Test
     void shouldReturnEmptyBytes() {
-        CodedCommunicator communicator = new CodedCommunicator(channel, encoder, decoder);
+        int m = 6;
+        CodedCommunicator communicator = new CodedCommunicator(channel, encoder, decoder, m);
         byte[] payload = new byte[5];
         boolean[] booleanArr = new boolean[5];
         boolean[] payloadInBinary = new boolean[5*8];
 
-        int m = 6;
+
         double errorRate = 0;
         when(encoder.encode((boolean[]) any(), eq(m)))
                 .thenReturn(booleanArr);
@@ -64,18 +64,18 @@ public class CodedCommunicatorTest {
         when(decoder.decode(any(), eq(m)))
                 .thenReturn(payloadInBinary);
 
-        byte[] result = communicator.transmitAndReceiveCodedBytes(payload, m, errorRate);
+        byte[] result = communicator.transmitAndReceiveCodedBytes(payload, errorRate);
         assertThat(result.length, is(payload.length));
         assertThat(result, is(payload));
     }
 
     @Test
     void shouldReturnEmptyBits() {
-        CodedCommunicator communicator = new CodedCommunicator(channel, encoder, decoder);
+        int m = 3;
+        CodedCommunicator communicator = new CodedCommunicator(channel, encoder, decoder, m);
         boolean[] payload = new boolean[5];
         boolean[] booleanArr = new boolean[7];
 
-        int m = 3;
         double errorRate = 0;
         when(encoder.encode((boolean[]) any(), eq(m)))
                 .thenReturn(booleanArr);
@@ -84,7 +84,7 @@ public class CodedCommunicatorTest {
         when(decoder.decode(any(), eq(m)))
                 .thenReturn(payload);
 
-        boolean[] result = communicator.transmitAndReceiveCodedBits(payload, m, errorRate);
+        boolean[] result = communicator.transmitAndReceiveCodedBits(payload, errorRate);
         assertThat(result.length, is(payload.length));
         assertThat(result, is(payload));
     }

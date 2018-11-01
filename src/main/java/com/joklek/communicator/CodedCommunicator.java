@@ -15,20 +15,24 @@ public class CodedCommunicator implements Communicator {
     private final Channel channel;
     private final Encoder encoder;
     private final Decoder decoder;
+    private final int m;
 
-    public CodedCommunicator(Channel channel, Encoder encoder, Decoder decoder) {
+    public CodedCommunicator(Channel channel, Encoder encoder, Decoder decoder, int m) {
         this.channel = channel;
         this.encoder = encoder;
         this.decoder = decoder;
+        this.m = m;
     }
 
-    public byte[] transmitAndReceiveCodedBytes(byte[] bytes, int m, double errorRate) {
+    @Override
+    public byte[] transmitAndReceiveCodedBytes(byte[] bytes, double errorRate) {
         boolean[] listOfBools = BooleanUtils.getAsBits(bytes);
-        boolean[] decodedBools = transmitAndReceiveCodedBits(listOfBools, m, errorRate);
+        boolean[] decodedBools = transmitAndReceiveCodedBits(listOfBools, errorRate);
         return BooleanUtils.getBytes(decodedBools);
     }
 
-    public boolean[] transmitAndReceiveCodedBits(boolean[] bits, int m, double errorRate) {
+    @Override
+    public boolean[] transmitAndReceiveCodedBits(boolean[] bits, double errorRate) {
         int originalSize = bits.length;
         Stream<Object> bitStream = getBitStream(bits, m);
         List<Boolean> decodedBools = bitStream

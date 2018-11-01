@@ -12,14 +12,14 @@ public class UncodedCommunicator implements Communicator {
     }
 
     @Override
-    public byte[] transmitAndReceiveCodedBytes(byte[] bytes, int m, double errorRate) {
+    public byte[] transmitAndReceiveCodedBytes(byte[] bytes, double errorRate) {
         boolean[] listOfBools = BooleanUtils.getAsBits(bytes);
-        boolean[] decodedBools = transmitAndReceiveCodedBits(listOfBools, m, errorRate);
+        boolean[] decodedBools = transmitAndReceiveCodedBits(listOfBools, errorRate);
         return BooleanUtils.getBytes(decodedBools);
     }
 
     @Override
-    public boolean[] transmitAndReceiveCodedBits(boolean[] bits, int m, double errorRate) {
+    public boolean[] transmitAndReceiveCodedBits(boolean[] bits, double errorRate) {
         return channel.sendThroughChannel(bits, errorRate);
     }
 }

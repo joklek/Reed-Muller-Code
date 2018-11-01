@@ -22,8 +22,9 @@ To run the program use
 The command line arguements are these:
 
 ##### Required
-* -m <INTEGER>, e.g. "-m 4". This is the m for code generation.
 * -e <DOUBLE[0,1]> "-e 0.1". This is the channels error rate. 
+* -m <INTEGER>, e.g. "-m 4". This is the m for code generation.  Cannot be used with -u
+* -u, This indicates that no coding should take place. Cannot be used with -m
 
 if no valid flags are entered after the required arguments, all the text is fed into the program and then printed as it was decoded.
 
@@ -45,4 +46,9 @@ To run on a chosen file
 To run on a binary vector
 ```
 > runReedMuller -m 3 -e 0.1 -b 01010101111
+```
+
+To run on a binary vector through channel uncoded
+```
+> runReedMuller -u -e 0.1 -b 01010101111
 ```

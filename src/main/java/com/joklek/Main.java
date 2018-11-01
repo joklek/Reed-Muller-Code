@@ -13,34 +13,29 @@ import java.util.regex.Pattern;
 @SuppressWarnings("squid:S106")
 public class Main {
 
-    private static List<String> argumentFlags = Arrays.asList("-f", "-b", "-m", "-e");
+    private static List<String> argumentFlags = Arrays.asList("-f", "-b", "-m", "-e", "-u");
 
     public static void main(String[] args) throws IOException {
-        Communicator codedCommunicator = new CodedCommunicator(new Channel(), new Encoder(new ReedMullerCodeGenerator()), new Decoder());
-        Communicator uncodedCommunicator = new UncodedCommunicator(new Channel());
-
-        Map<String, String> arguments = collectArgumentMap(args);
-        if (arguments == null) {
-            return;
-        }
-
-        int m;
         double errorRate;
-        try {
-            m = Integer.parseInt(arguments.get("-m"));
-            errorRate = Double.parseDouble(arguments.get("-e"));
+        Communicator communicator;
+        Map<String, String> arguments = collectArgumentMap(args);
+
+        if (arguments == null) { return; }
+
+        if(arguments.containsKey("-u")) {
+            communicator = new UncodedCommunicator(new Channel());
         }
-        catch (NumberFormatException e) {
-            System.err.println(String.format("Incorrect flags, \"-m\" should be integer, but is %s%n" +
-                    "\"-e\" should be decimal number between 0 and 100, but is %s%n",arguments.get("-m"), arguments.get("-e")));
-            return;
+        else {
+            int m = parseM(arguments);
+            communicator = new CodedCommunicator(new Channel(), new Encoder(new ReedMullerCodeGenerator()), new Decoder(), m);
         }
+        errorRate = parseErrorRate(arguments);
 
         if(arguments.containsKey("-f")) {
             String sourcePath = arguments.get("-f");
             File fi = new File(sourcePath);
             byte[] fileContent = Files.readAllBytes(fi.toPath());
-            byte[] receiveBytes = codedCommunicator.transmitAndReceiveCodedBytes(fileContent, m, errorRate);
+            byte[] receiveBytes = communicator.transmitAndReceiveCodedBytes(fileContent, errorRate);
             try (OutputStream out = new BufferedOutputStream(new FileOutputStream(sourcePath + ".out"))) {
                 out.write(receiveBytes);
             }
@@ -52,7 +47,7 @@ public class Main {
                 for(int i = 0; i < input.length(); i++) {
                     vector[i] = input.charAt(i) == '1';
                 }
-                boolean[] decoded = codedCommunicator.transmitAndReceiveCodedBits(vector, m, errorRate);
+                boolean[] decoded = communicator.transmitAndReceiveCodedBits(vector, errorRate);
                 for (Boolean aDecoded : decoded) {
                     System.out.print(aDecoded ? 1 : 0);
                 }
@@ -60,24 +55,48 @@ public class Main {
             }
         }
         else {
-            byte[] decoded = codedCommunicator.transmitAndReceiveCodedBytes(arguments.get("args").getBytes(), m, errorRate);
+            byte[] decoded = communicator.transmitAndReceiveCodedBytes(arguments.get("args").getBytes(), errorRate);
             System.out.println(new String(decoded));
         }
     }
 
+    private static double parseErrorRate(Map<String, String> arguments) {
+        try {
+            return Double.parseDouble(arguments.get("-e"));
+        }
+        catch (NumberFormatException e) {
+            System.err.println(String.format("\"-e\" should be decimal number between 0.0 and 0.100, but is %s%n", arguments.get("-e")));
+            return -1;
+        }
+    }
+
+    private static int parseM(Map<String, String> arguments) {
+        try {
+            return Integer.parseInt(arguments.get("-m"));
+        }
+        catch (NumberFormatException e) {
+            System.err.println(String.format("Incorrect flags, \"-m\" should be integer, but is %s%n", arguments.get("-m")));
+            return -1;
+        }
+    }
+
     private static Map<String, String> collectArgumentMap(String[] args) {
-        if(args.length < 5) {
-            System.err.println("Not enough arguments. Example arguments '-m 4 -e 0.1 hello'");
+        if(args.length < 4) {
+            System.err.println("Not enough arguments. Example arguments '-m 4 -e 0.1 hello' or '-e 0.1 -u this is an uncoded message'");
             return null;
         }
         Map<String, String> arguments = parseArgs(args);
 
         if(arguments.size() < 3) {
-            System.err.println("Not enough arguments, should contain -m and -e flags and something to encode");
+            System.err.println("Not enough arguments, should contain -m and -e, or -u flags and something to encode");
             return null;
         }
-        if(!arguments.containsKey("-m") || !arguments.containsKey("-e")) {
-            System.err.println("Should contain -m and -e flags");
+        if((!arguments.containsKey("-m") || !arguments.containsKey("-e")) && !arguments.containsKey("-u")) {
+            System.err.println("Should contain -m and -e, or -u flags");
+            return null;
+        }
+        if(arguments.containsKey("-m") && arguments.containsKey("-e") && arguments.containsKey("-u")) {
+            System.err.println("Should contain -m and -e, or -u flags, now contains all three");
             return null;
         }
         return arguments;
@@ -89,8 +108,8 @@ public class Main {
         List<String> argList = new ArrayList<>(Arrays.asList(args));
         for (String argFlag: argumentFlags) {
             int index = argList.indexOf(argFlag);
-            if (index >= 0 && argList.size() > index + 1) {
-                String argValue = argList.get(index + 1);
+            if (index >= 0) {
+                String argValue = !argFlag.equals("-u") && argList.size() > index + 1 ? argList.get(index + 1) : null;
                 map.put(argFlag, argValue);
                 argList.remove(argFlag);
                 argList.remove(argValue);
