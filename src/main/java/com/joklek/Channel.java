@@ -1,6 +1,6 @@
-package com.jole3970;
+package com.joklek;
 
-import com.jole3970.datastructure.BooleanUtils;
+import com.joklek.datastructure.BooleanUtils;
 
 import java.util.Random;
 import java.util.stream.IntStream;

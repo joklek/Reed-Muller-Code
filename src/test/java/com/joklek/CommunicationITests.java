@@ -1,4 +1,4 @@
-package com.jole3970;
+package com.joklek;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

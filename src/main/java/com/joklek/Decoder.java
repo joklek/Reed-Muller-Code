@@ -1,7 +1,7 @@
-package com.jole3970;
+package com.joklek;
 
-import com.jole3970.datastructure.BooleanUtils;
-import com.jole3970.datastructure.Matrix;
+import com.joklek.datastructure.BooleanUtils;
+import com.joklek.datastructure.Matrix;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;

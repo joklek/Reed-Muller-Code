@@ -1,6 +1,6 @@
-package com.jole3970;
+package com.joklek;
 
-import com.jole3970.datastructure.BooleanUtils;
+import com.joklek.datastructure.BooleanUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

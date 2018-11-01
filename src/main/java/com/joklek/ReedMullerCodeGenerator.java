@@ -1,6 +1,6 @@
-package com.jole3970;
+package com.joklek;
 
-import com.jole3970.datastructure.Matrix;
+import com.joklek.datastructure.Matrix;
 
 import java.util.HashMap;
 import java.util.Map;
