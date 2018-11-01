@@ -27,7 +27,7 @@ public class Main {
             errorRate = Double.parseDouble(arguments.get("-e"));
         }
         catch (NumberFormatException e) {
-            System.out.println(String.format("Incorrect flags, \"-m\" should be integer, but is %s%n" +
+            System.err.println(String.format("Incorrect flags, \"-m\" should be integer, but is %s%n" +
                     "\"-e\" should be decimal number between 0 and 100, but is %s%n",arguments.get("-m"), arguments.get("-e")));
             return;
         }
@@ -63,17 +63,17 @@ public class Main {
 
     private static Map<String, String> collectArgumentMap(String[] args) {
         if(args.length < 5) {
-            System.out.println("Not enough arguments. Example arguments '-m 4 -e 0.1 hello'");
+            System.err.println("Not enough arguments. Example arguments '-m 4 -e 0.1 hello'");
             return null;
         }
         Map<String, String> arguments = parseArgs(args);
 
         if(arguments.size() < 3) {
-            System.out.println("Not enough arguments, should contain -m and -e flags and something to encode");
+            System.err.println("Not enough arguments, should contain -m and -e flags and something to encode");
             return null;
         }
         if(!arguments.containsKey("-m") || !arguments.containsKey("-e")) {
-            System.out.println("Should contain -m and -e flags");
+            System.err.println("Should contain -m and -e flags");
             return null;
         }
         return arguments;
