@@ -1,7 +1,7 @@
 package com.joklek.communicator;
 
-import com.joklek.Channel;
-import com.joklek.datastructure.BooleanUtils;
+import com.joklek.BooleanUtils;
+import com.joklek.communicator.elements.Channel;
 
 public class UncodedCommunicator implements Communicator {
 

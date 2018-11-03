@@ -1,6 +1,10 @@
 package com.joklek;
 
 import com.joklek.communicator.CodedCommunicator;
+import com.joklek.communicator.ReedMullerCodeGenerator;
+import com.joklek.communicator.elements.Channel;
+import com.joklek.communicator.elements.Decoder;
+import com.joklek.communicator.elements.Encoder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 

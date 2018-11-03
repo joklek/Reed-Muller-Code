@@ -1,9 +1,9 @@
 package com.joklek.communicator;
 
-import com.joklek.Channel;
-import com.joklek.Decoder;
-import com.joklek.Encoder;
-import com.joklek.datastructure.BooleanUtils;
+import com.joklek.BooleanUtils;
+import com.joklek.communicator.elements.Channel;
+import com.joklek.communicator.elements.Decoder;
+import com.joklek.communicator.elements.Encoder;
 
 import java.util.Arrays;
 import java.util.List;

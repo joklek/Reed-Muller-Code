@@ -2,20 +2,32 @@ package com.joklek;
 
 import com.joklek.communicator.CodedCommunicator;
 import com.joklek.communicator.Communicator;
+import com.joklek.communicator.ReedMullerCodeGenerator;
 import com.joklek.communicator.UncodedCommunicator;
+import com.joklek.communicator.elements.Channel;
+import com.joklek.communicator.elements.Decoder;
+import com.joklek.communicator.elements.Encoder;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
-import java.nio.file.Files;
+import javax.swing.*;
+import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
+
+import static com.joklek.errors.ErrorMessages.ERROR_RATE_NOT_DECIMAL;
+import static com.joklek.errors.ErrorMessages.M_NOT_INTEGER;
 
 @SuppressWarnings("squid:S106")
 public class Main {
 
-    private static List<String> argumentFlags = Arrays.asList("-f", "-b", "-m", "-e", "-u");
+    private static List<String> argumentFlags = Arrays.asList("-f", "-b", "-m", "-e", "-u", "-i");
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+
+        if(args[0].equals("-gui")) {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            return;
+        }
+
         double errorRate;
         Communicator communicator;
         Map<String, String> arguments = collectArgumentMap(args);
@@ -31,51 +43,28 @@ public class Main {
         }
         errorRate = parseErrorRate(arguments);
 
-        if(arguments.containsKey("-f")) {
-            String sourcePath = arguments.get("-f");
-            File fi = new File(sourcePath);
-            byte[] fileContent = Files.readAllBytes(fi.toPath());
-            byte[] receiveBytes = communicator.transmitAndReceiveCodedBytes(fileContent, errorRate);
-            try (OutputStream out = new BufferedOutputStream(new FileOutputStream(sourcePath + ".out"))) {
-                out.write(receiveBytes);
-            }
-        }
-        else if(arguments.containsKey("-b")) {
-            String input = arguments.get("-b");
-            if(Pattern.matches("^[0,1]+$", input)) {
-                boolean[] vector = new boolean[input.length()];
-                for(int i = 0; i < input.length(); i++) {
-                    vector[i] = input.charAt(i) == '1';
-                }
-                boolean[] decoded = communicator.transmitAndReceiveCodedBits(vector, errorRate);
-                for (Boolean aDecoded : decoded) {
-                    System.out.print(aDecoded ? 1 : 0);
-                }
-                System.out.println();
-            }
-        }
-        else {
-            byte[] decoded = communicator.transmitAndReceiveCodedBytes(arguments.get("args").getBytes(), errorRate);
-            System.out.println(new String(decoded));
-        }
+        Operator operator = new Operator();
+        operator.sendWithCommunicator(arguments, communicator, errorRate);
     }
 
     private static double parseErrorRate(Map<String, String> arguments) {
+        String errorRateString = arguments.get("-e");
         try {
-            return Double.parseDouble(arguments.get("-e"));
+            return Double.parseDouble(errorRateString);
         }
         catch (NumberFormatException e) {
-            System.err.println(String.format("\"-e\" should be decimal number between 0.0 and 0.100, but is %s%n", arguments.get("-e")));
+            System.err.println(ERROR_RATE_NOT_DECIMAL(errorRateString));
             return -1;
         }
     }
 
     private static int parseM(Map<String, String> arguments) {
+        String mString = arguments.get("-m");
         try {
-            return Integer.parseInt(arguments.get("-m"));
+            return Integer.parseInt(mString);
         }
         catch (NumberFormatException e) {
-            System.err.println(String.format("Incorrect flags, \"-m\" should be integer, but is %s%n", arguments.get("-m")));
+            System.err.println(M_NOT_INTEGER(mString));
             return -1;
         }
     }

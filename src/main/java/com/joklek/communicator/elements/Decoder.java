@@ -1,6 +1,6 @@
-package com.joklek;
+package com.joklek.communicator.elements;
 
-import com.joklek.datastructure.BooleanUtils;
+import com.joklek.BooleanUtils;
 import com.joklek.datastructure.Matrix;
 import org.apache.commons.lang3.tuple.Pair;
 

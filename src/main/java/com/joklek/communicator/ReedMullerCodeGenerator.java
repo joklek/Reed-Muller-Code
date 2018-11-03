@@ -1,4 +1,4 @@
-package com.joklek;
+package com.joklek.communicator;
 
 import com.joklek.datastructure.Matrix;
 

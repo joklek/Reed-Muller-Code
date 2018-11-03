@@ -1,4 +1,4 @@
-package com.joklek.datastructure;
+package com.joklek;
 
 import java.util.List;
 import java.util.stream.Collector;

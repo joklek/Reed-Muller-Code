@@ -1,4 +1,4 @@
-package com.joklek.datastructure;
+package com.joklek;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

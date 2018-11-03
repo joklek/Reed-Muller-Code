@@ -1,8 +1,8 @@
 package com.joklek.communicator;
 
-import com.joklek.Channel;
-import com.joklek.Decoder;
-import com.joklek.Encoder;
+import com.joklek.communicator.elements.Channel;
+import com.joklek.communicator.elements.Decoder;
+import com.joklek.communicator.elements.Encoder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

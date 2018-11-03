@@ -1,6 +1,7 @@
-package com.joklek;
+package com.joklek.communicator.elements;
 
-import com.joklek.datastructure.BooleanUtils;
+import com.joklek.BooleanUtils;
+import com.joklek.communicator.ReedMullerCodeGenerator;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,7 +24,7 @@ public class EncoderTest {
     @ParameterizedTest
     @MethodSource("wordEndExpectedEncoded")
     void shouldDecodeCorrectly(int[] word, int[] expected, int m) {
-        ReedMullerCodeGenerator generator = new ReedMullerCodeGenerator(); // No idea how and why to mock this, I guess this is an integration test then
+        ReedMullerCodeGenerator generator = new ReedMullerCodeGenerator(); // No idea how and why to mock this, I guess this is an integration sendWithCommunicator then
 
         Encoder encoder = new Encoder(generator);
         boolean[] encoded = encoder.encode(word, m);
