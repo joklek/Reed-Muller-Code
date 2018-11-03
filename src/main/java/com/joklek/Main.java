@@ -7,9 +7,9 @@ import com.joklek.communicator.UncodedCommunicator;
 import com.joklek.communicator.elements.Channel;
 import com.joklek.communicator.elements.Decoder;
 import com.joklek.communicator.elements.Encoder;
+import com.joklek.fxgui.GuiLauncher;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
 
@@ -29,10 +29,10 @@ public class Main {
         workingModeFlags = Collections.unmodifiableMap(aMap);
     }
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+    public static void main(String[] args) throws IOException {
 
         if(args[0].equals("-gui")) {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            GuiLauncher.main(new String[0]);
             return;
         }
 
