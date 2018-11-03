@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class Matrix {
-    protected final int height;
-    protected final int length;
-    protected final int[][] data;
+    private final int height;
+    private final int length;
+    private final int[][] data;
 
     /**
      * Creates a new matrix and fills it with zeroes
@@ -46,7 +46,7 @@ public class Matrix {
     }
 
     /**
-     * Multiplies current matrix with another. Current matrix length should be equal to given matrix height. X×Y multiplied by Z×W, should have Y == Z
+     * Multiplies current matrix with another and returns new matrix. Current matrix length should be equal to given matrix height. X×Y multiplied by Z×W, should have Y == Z
      * @param matrixToMultiplyBy the matrix that the current should be multiplied with
      * @return a new matrix that is the product of matrix multiplication. Dimensions of new matrix (where X×Y is multiplied by Z×W) is X×W
      */
@@ -80,30 +80,13 @@ public class Matrix {
         for(int i = 0; i < newHeight; i++) {
             for(int j = 0; j < newLength; j++) {
                 int valueOfCell = data[i/hostHeight][j/hostLength];
+                if(valueOfCell == 0) {
+                    continue;            // this is a optimisation, probably unnecessary
+                }
                 newArray[i][j] = matrix.getData()[i%hostHeight][j%hostLength] * valueOfCell;
             }
         }
         return new Matrix(newArray);
-    }
-
-    /**
-     * Matrix addition, where matrix dimensions should be identical
-     * @param matrixToAdd the term matrix, which is to be added to the current one
-     * @return a new matrix that is the product of matrix addition
-     */
-    public Matrix add(Matrix matrixToAdd) {
-        if (length != matrixToAdd.getLength() ||
-                height != matrixToAdd.getHeight()) {
-            throw new IllegalStateException("Matrix dimensions should match");
-        }
-        Matrix newMatrix = new Matrix(height, length);
-
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < length; j++) {
-                newMatrix.getData()[i][j] += data[i][j] + matrixToAdd.getData()[i][j];
-            }
-        }
-        return newMatrix;
     }
 
     /**

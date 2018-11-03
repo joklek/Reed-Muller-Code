@@ -74,24 +74,6 @@ public class MatrixTest {
     }
 
 
-    private static Stream<Arguments> matrixTermAndSum() {
-        return Stream.of(
-                arguments(new int[][]{{1}}, new int[][]{{2}}, new int[][]{{3}}),
-                arguments(new int[][]{{1}, {2}}, new int[][]{{3}, {2}}, new int[][]{{4}, {4}}),
-                arguments(new int[][]{{1, 2}, {3, 4}}, new int[][]{{3, 4}, {5, 6}}, new int[][]{{4, 6}, {8, 10}})
-        );
-    }
-    @ParameterizedTest
-    @MethodSource("matrixTermAndSum")
-    void shouldAddCorrectly(int[][] array, int[][] term, int[][] sum) {
-        Matrix matrix = new Matrix(array);
-        Matrix termMatrix = new Matrix(term);
-        Matrix sumMatrix = new Matrix(sum);
-
-        assertThat(matrix.add(termMatrix), is(sumMatrix));
-    }
-
-
     private static Stream<Arguments> matrixMultiplierAndResult() {
         return Stream.of(
                 arguments(new int[][]{{2, 3, 4}, {1, 0, 0}}, new int[][]{{0, 1000}, {1, 100}, {0, 10}}, new int[][]{{3, 2340}, {0, 1000}}),

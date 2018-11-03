@@ -52,3 +52,6 @@ To run on a binary vector through channel uncoded
 ```
 > runReedMuller -u -e 0.1 -b 01010101111
 ```
+
+#### GUI MODE
+You can run in the GUI mode by running `> runReedMuller -gui`, or `> reedMullerGui`
