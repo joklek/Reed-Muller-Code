@@ -20,6 +20,14 @@ import static com.joklek.errors.ErrorMessages.M_NOT_INTEGER;
 public class Main {
 
     private static List<String> argumentFlags = Arrays.asList("-f", "-b", "-m", "-e", "-u", "-i");
+    private static Map<String, WorkingMode> workingModeFlags;
+    static {
+        Map<String, WorkingMode> aMap = new HashMap<>();
+        aMap.put("-f", WorkingMode.FILE);
+        aMap.put("-i", WorkingMode.BITMAP);
+        aMap.put("-b", WorkingMode.BINARY);
+        workingModeFlags = Collections.unmodifiableMap(aMap);
+    }
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 
@@ -44,7 +52,23 @@ public class Main {
         errorRate = parseErrorRate(arguments);
 
         Operator operator = new Operator();
-        operator.sendWithCommunicator(arguments, communicator, errorRate);
+
+
+        WorkingMode workingMode = null;
+        String payload = "";
+
+        for(Map.Entry<String, WorkingMode> entry: workingModeFlags.entrySet()) {
+            if (arguments.containsKey(entry.getKey())) {
+                workingMode = entry.getValue();
+                payload = arguments.get(entry.getKey());
+            }
+        }
+        if (payload == null) {
+            workingMode = WorkingMode.TEXT;
+            payload = arguments.get("args");
+        }
+
+        operator.sendWithCommunicator(workingMode, payload, communicator, errorRate);
     }
 
     private static double parseErrorRate(Map<String, String> arguments) {

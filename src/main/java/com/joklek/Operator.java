@@ -2,29 +2,27 @@ package com.joklek;
 
 import com.joklek.communicator.Communicator;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Operator {
-    public byte[] sendWithCommunicator(Map<String, String> arguments, Communicator communicator, double errorRate) throws IOException {
-        if(arguments.containsKey("-f")) {
-            String sourcePath = arguments.get("-f");
-            File fi = new File(sourcePath);
-            byte[] fileContent = Files.readAllBytes(fi.toPath());
-            return communicator.transmitAndReceiveCodedBytes(fileContent, errorRate);
-        }
-        else if (arguments.containsKey("-i")) {
-            String sourcePath = arguments.get("-i");
-            return sendBitmap(sourcePath, communicator, errorRate);
-        }
-        else if(arguments.containsKey("-b")) {
-            String input = arguments.get("-b");
-            return sendBinaryRepresentation(input, communicator, errorRate);
-        }
-        else {
-            return communicator.transmitAndReceiveCodedBytes(arguments.get("args").getBytes(), errorRate);
+    public byte[] sendWithCommunicator(WorkingMode mode, String payloadInfo, Communicator communicator, double errorRate) throws IOException {
+        switch (mode) {
+            case FILE:
+                File fi = new File(payloadInfo);
+                byte[] fileContent = Files.readAllBytes(fi.toPath());
+                return communicator.transmitAndReceiveCodedBytes(fileContent, errorRate);
+            case BITMAP:
+                return sendBitmap(payloadInfo, communicator, errorRate);
+            case BINARY:
+                return sendBinaryRepresentation(payloadInfo, communicator, errorRate);
+            case TEXT:
+                return communicator.transmitAndReceiveCodedBytes(payloadInfo.getBytes(), errorRate);
+            default:
+                System.out.println("this should not happen"); // TODO Throw exception
+                return new byte[0];
         }
     }
 
