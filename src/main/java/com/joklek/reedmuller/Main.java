@@ -1,20 +1,18 @@
-package com.joklek;
+package com.joklek.reedmuller;
 
-import com.joklek.communicator.CodedCommunicator;
-import com.joklek.communicator.Communicator;
-import com.joklek.communicator.ReedMullerCodeGenerator;
-import com.joklek.communicator.UncodedCommunicator;
-import com.joklek.communicator.elements.Channel;
-import com.joklek.communicator.elements.Decoder;
-import com.joklek.communicator.elements.Encoder;
-import com.joklek.fxgui.GuiLauncher;
+import com.joklek.reedmuller.communicator.CodedCommunicator;
+import com.joklek.reedmuller.communicator.Communicator;
+import com.joklek.reedmuller.communicator.ReedMullerCodeGenerator;
+import com.joklek.reedmuller.communicator.UncodedCommunicator;
+import com.joklek.reedmuller.communicator.elements.Channel;
+import com.joklek.reedmuller.communicator.elements.Decoder;
+import com.joklek.reedmuller.communicator.elements.Encoder;
+import com.joklek.reedmuller.fxgui.GuiLauncher;
+import com.joklek.reedmuller.errors.ErrorMessages;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
-
-import static com.joklek.errors.ErrorMessages.ERROR_RATE_NOT_DECIMAL;
-import static com.joklek.errors.ErrorMessages.M_NOT_INTEGER;
 
 @SuppressWarnings("squid:S106")
 public class Main {
@@ -63,12 +61,32 @@ public class Main {
                 payload = arguments.get(entry.getKey());
             }
         }
-        if (payload == null) {
+        if (payload.isEmpty()) {
             workingMode = WorkingMode.TEXT;
             payload = arguments.get("args");
         }
+        if(workingMode == null) {
+            return;
+        }
 
-        operator.sendWithCommunicator(workingMode, payload, communicator, errorRate);
+        byte[] bytes = operator.sendWithCommunicator(workingMode, payload, communicator, errorRate);
+
+        switch (workingMode) {
+            case FILE:
+                try (OutputStream out = new BufferedOutputStream(new FileOutputStream(payload + ".out"))) {
+                    out.write(bytes);
+                }
+                break;
+            case BITMAP:
+                try (OutputStream out = new BufferedOutputStream(new FileOutputStream(payload + ".out.bmp"))) {
+                    out.write(bytes);
+                }
+                break;
+            case BINARY:
+            case TEXT:
+                System.out.println(new String(bytes));
+                break;
+        }
     }
 
     private static double parseErrorRate(Map<String, String> arguments) {
@@ -77,7 +95,7 @@ public class Main {
             return Double.parseDouble(errorRateString);
         }
         catch (NumberFormatException e) {
-            System.err.println(ERROR_RATE_NOT_DECIMAL(errorRateString));
+            System.err.println(ErrorMessages.ERROR_RATE_NOT_DECIMAL(errorRateString));
             return -1;
         }
     }
@@ -88,7 +106,7 @@ public class Main {
             return Integer.parseInt(mString);
         }
         catch (NumberFormatException e) {
-            System.err.println(M_NOT_INTEGER(mString));
+            System.err.println(ErrorMessages.M_NOT_INTEGER(mString));
             return -1;
         }
     }

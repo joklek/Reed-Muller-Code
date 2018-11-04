@@ -1,8 +1,8 @@
-package com.joklek.communicator.elements;
+package com.joklek.reedmuller.communicator.elements;
 
-import com.joklek.BooleanUtils;
-import com.joklek.communicator.ReedMullerCodeGenerator;
-import com.joklek.datastructure.Matrix;
+import com.joklek.reedmuller.BooleanUtils;
+import com.joklek.reedmuller.communicator.ReedMullerCodeGenerator;
+import com.joklek.reedmuller.datastructure.Matrix;
 
 public class Encoder {
 

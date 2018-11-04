@@ -1,9 +1,9 @@
-package com.joklek.communicator;
+package com.joklek.reedmuller.communicator;
 
-import com.joklek.BooleanUtils;
-import com.joklek.communicator.elements.Channel;
-import com.joklek.communicator.elements.Decoder;
-import com.joklek.communicator.elements.Encoder;
+import com.joklek.reedmuller.BooleanUtils;
+import com.joklek.reedmuller.communicator.elements.Channel;
+import com.joklek.reedmuller.communicator.elements.Decoder;
+import com.joklek.reedmuller.communicator.elements.Encoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +24,12 @@ public class CodedCommunicator implements Communicator {
         this.m = m;
     }
 
+    /**
+     * Transmits coded bytes through a channel with given error rate and then returns the received uncoded data
+     * @param bytes byte array of data that is to be transmitted
+     * @param errorRate error rate of channel
+     * @return received data
+     */
     @Override
     public byte[] transmitAndReceiveCodedBytes(byte[] bytes, double errorRate) {
         boolean[] listOfBools = BooleanUtils.getAsBits(bytes);
@@ -31,6 +37,12 @@ public class CodedCommunicator implements Communicator {
         return BooleanUtils.getBytes(decodedBools);
     }
 
+    /**
+     * Transmits coded bits through a channel with given error rate and then returns the received uncoded data
+     * @param bits bit array of data that is to be transmitted
+     * @param errorRate error rate of channel
+     * @return received data
+     */
     @Override
     public boolean[] transmitAndReceiveCodedBits(boolean[] bits, double errorRate) {
         int originalSize = bits.length;

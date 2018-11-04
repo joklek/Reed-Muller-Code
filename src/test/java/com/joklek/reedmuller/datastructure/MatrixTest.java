@@ -1,4 +1,4 @@
-package com.joklek.datastructure;
+package com.joklek.reedmuller.datastructure;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;

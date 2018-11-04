@@ -1,4 +1,4 @@
-package com.joklek.fxgui;
+package com.joklek.reedmuller.fxgui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

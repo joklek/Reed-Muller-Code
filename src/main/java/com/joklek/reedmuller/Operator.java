@@ -1,6 +1,6 @@
-package com.joklek;
+package com.joklek.reedmuller;
 
-import com.joklek.communicator.Communicator;
+import com.joklek.reedmuller.communicator.Communicator;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,16 @@ import java.nio.file.Files;
 import java.util.regex.Pattern;
 
 public class Operator {
+
+    /**
+     *
+     * @param mode the desired working mode
+     * @param payloadInfo payload information in a string form, that is given from command line, GUI or similar
+     * @param communicator communicator witch which all interpreted payload should be sent
+     * @param errorRate wanted error rate
+     * @return a byte array of data received by the {@link Communicator}
+     * @throws IOException
+     */
     public byte[] sendWithCommunicator(WorkingMode mode, String payloadInfo, Communicator communicator, double errorRate) throws IOException {
         switch (mode) {
             case FILE:

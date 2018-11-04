@@ -1,7 +1,7 @@
-package com.joklek.communicator.elements;
+package com.joklek.reedmuller.communicator.elements;
 
-import com.joklek.BooleanUtils;
-import com.joklek.datastructure.Matrix;
+import com.joklek.reedmuller.BooleanUtils;
+import com.joklek.reedmuller.datastructure.Matrix;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;

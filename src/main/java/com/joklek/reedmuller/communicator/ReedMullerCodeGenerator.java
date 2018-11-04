@@ -1,6 +1,6 @@
-package com.joklek.communicator;
+package com.joklek.reedmuller.communicator;
 
-import com.joklek.datastructure.Matrix;
+import com.joklek.reedmuller.datastructure.Matrix;
 
 import java.util.HashMap;
 import java.util.Map;

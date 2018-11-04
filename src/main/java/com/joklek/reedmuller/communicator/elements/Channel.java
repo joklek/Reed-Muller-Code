@@ -1,6 +1,6 @@
-package com.joklek.communicator.elements;
+package com.joklek.reedmuller.communicator.elements;
 
-import com.joklek.BooleanUtils;
+import com.joklek.reedmuller.BooleanUtils;
 
 import java.util.Random;
 import java.util.stream.IntStream;

@@ -30,7 +30,7 @@
                     <!-- MainClass in mainfest make a executable jar -->
                     <archive>
                         <manifest>
-                            <mainClass>com.joklek.Main</mainClass>
+                            <mainClass>com.joklek.reedmuller.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

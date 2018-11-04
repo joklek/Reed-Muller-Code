@@ -1,14 +1,14 @@
-package com.joklek.fxgui;
+package com.joklek.reedmuller.fxgui;
 
-import com.joklek.Operator;
-import com.joklek.WorkingMode;
-import com.joklek.communicator.CodedCommunicator;
-import com.joklek.communicator.Communicator;
-import com.joklek.communicator.ReedMullerCodeGenerator;
-import com.joklek.communicator.UncodedCommunicator;
-import com.joklek.communicator.elements.Channel;
-import com.joklek.communicator.elements.Decoder;
-import com.joklek.communicator.elements.Encoder;
+import com.joklek.reedmuller.Operator;
+import com.joklek.reedmuller.WorkingMode;
+import com.joklek.reedmuller.communicator.CodedCommunicator;
+import com.joklek.reedmuller.communicator.Communicator;
+import com.joklek.reedmuller.communicator.ReedMullerCodeGenerator;
+import com.joklek.reedmuller.communicator.UncodedCommunicator;
+import com.joklek.reedmuller.communicator.elements.Channel;
+import com.joklek.reedmuller.communicator.elements.Decoder;
+import com.joklek.reedmuller.communicator.elements.Encoder;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;

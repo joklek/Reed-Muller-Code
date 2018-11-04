@@ -1,4 +1,4 @@
-package com.joklek.errors;
+package com.joklek.reedmuller.errors;
 
 public class ErrorMessages {
     private ErrorMessages() {

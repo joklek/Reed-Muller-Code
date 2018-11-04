@@ -1,4 +1,4 @@
-package com.joklek.datastructure;
+package com.joklek.reedmuller.datastructure;
 
 import java.util.Arrays;
 import java.util.Objects;

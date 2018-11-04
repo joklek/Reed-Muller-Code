@@ -1,4 +1,4 @@
-package com.joklek;
+package com.joklek.reedmuller;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
