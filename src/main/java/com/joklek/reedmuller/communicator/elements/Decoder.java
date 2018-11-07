@@ -43,7 +43,7 @@ public class Decoder {
         int number = Math.abs(max) > Math.abs(min) ? max : min;
         int sign = number > 0 ? 1 : 0;
         int length =  m + 1;
-        int pos = find(multipliedResult, number);
+        int pos = findPositionOfElementInArray(multipliedResult, number);
 
         int[] binaryFormReversed = getBinaryFormReversed(pos, m);
         int[] result = new int[length];
@@ -53,20 +53,27 @@ public class Decoder {
         return BooleanUtils.boolArrayFromIntArray(result);
     }
 
-    private int[] getBinaryFormReversed(int pos, int m) {
-        StringBuilder binaryRepresentation = new StringBuilder(Integer.toBinaryString(pos));
-        int[] array = new int[m];
+    /**
+     * Transforms number to binary representation and reverses it for given length.
+     * For example with m = 4, transformation for 3 goes like this: 3 -> 11 -> 0011 -> 1100
+     * @param number number to get the binary reversed form of
+     * @param length length of wanted array
+     * @return a reversed binary representation of a number
+     */
+    private int[] getBinaryFormReversed(int number, int length) {
+        StringBuilder binaryRepresentation = new StringBuilder(Integer.toBinaryString(number));
+        int[] array = new int[length];
 
-        while (binaryRepresentation.length() != m) {
+        while (binaryRepresentation.length() != length) {
             binaryRepresentation.insert(0, "0");
         }
         for(int i = 0; i < binaryRepresentation.length(); i++) {
-            array[m-1-i] = Character.getNumericValue(binaryRepresentation.charAt(i));
+            array[length-1-i] = Character.getNumericValue(binaryRepresentation.charAt(i));
         }
         return array;
     }
 
-    private int find(int[] array, int value) {
+    private int findPositionOfElementInArray(int[] array, int value) {
         for(int i=0; i<array.length; i++) {
             if(array[i] == value) {
                 return i;
@@ -83,6 +90,10 @@ public class Decoder {
         return switched;
     }
 
+    /**
+     * Generates i sized Hadamard matrix
+     * @return 2^m×2^m sized Hadamard matrix for i
+     */
     private Matrix generateHMatrix(int i, int m) {
         Pair<Integer, Integer> pair = Pair.of(m, i);
         return hMatrices.computeIfAbsent(pair, key -> {
@@ -94,6 +105,11 @@ public class Decoder {
         });
     }
 
+    /**
+     * Generates n-sized identity matrix
+     * @param n size of matrix
+     * @return n×n sized identity matrix
+     */
     private Matrix generateIMatrix(int n) {
         return iMatrices.computeIfAbsent(n , key -> {
             int[][] iArray = new int[n][n];

@@ -58,21 +58,24 @@ public class Controller {
     @FXML
     VBox selectionGrid;
 
-    private Operator operator;
-    private Channel channel;
-    private Encoder encoder;
-    private Decoder decoder;
-    private Communicator uncodedCommunicator;
+    private final Operator operator;
+    private final  Channel channel;
+    private final  Encoder encoder;
+    private final  Decoder decoder;
+    private final  Communicator uncodedCommunicator;
+    private final  FileChooser fileChooser;
 
-    final FileChooser fileChooser = new FileChooser();
 
-    {
+    public Controller() {
         operator = new Operator();
         channel = new Channel();
         ReedMullerCodeGenerator generator = new ReedMullerCodeGenerator();
         encoder = new Encoder(generator);
         decoder = new Decoder();
         uncodedCommunicator = new UncodedCommunicator(channel);
+        fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("BMP files (*.bmp)", "*.bmp");
+        fileChooser.getExtensionFilters().add(extFilter);
     }
 
     private WorkingMode setWorkingMode() {
