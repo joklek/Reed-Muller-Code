@@ -10,19 +10,20 @@ import com.joklek.reedmuller.communicator.elements.Channel;
 import com.joklek.reedmuller.communicator.elements.Decoder;
 import com.joklek.reedmuller.communicator.elements.Encoder;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Controller {
 
@@ -58,12 +59,23 @@ public class Controller {
     @FXML
     VBox selectionGrid;
 
+    @FXML
+    GridPane binaryPane;
+    @FXML
+    TextField codedBinary;
+    @FXML
+    TextField sentThroughChannel;
+    @FXML
+    Button decodeButton;
+    @FXML
+    Label numberOfErrors;
+
     private final Operator operator;
-    private final  Channel channel;
-    private final  Encoder encoder;
-    private final  Decoder decoder;
-    private final  Communicator uncodedCommunicator;
-    private final  FileChooser fileChooser;
+    private final Channel channel;
+    private final Encoder encoder;
+    private final Decoder decoder;
+    private final Communicator uncodedCommunicator;
+    private final FileChooser fileChooser;
 
 
     public Controller() {
@@ -79,13 +91,11 @@ public class Controller {
     }
 
     private WorkingMode setWorkingMode() {
-        if(imageRadio.isSelected()) {
+        if (imageRadio.isSelected()) {
             return WorkingMode.BITMAP;
-        }
-        else if(textRadio.isSelected()) {
+        } else if (textRadio.isSelected()) {
             return WorkingMode.TEXT;
-        }
-        else if(binaryRadio.isSelected()) {
+        } else if (binaryRadio.isSelected()) {
             return WorkingMode.BINARY;
         }
         throw new IllegalStateException("An unknown state has been reached. Bad news");
@@ -106,7 +116,7 @@ public class Controller {
 
         WorkingMode mode = setWorkingMode();
         int parsedM = Integer.parseInt(mField.getText());
-        double parsedErrorRate = Double.parseDouble(errorField.getText());
+        double parsedErrorRate = Double.parseDouble(errorField.getText()) / 100;
 
         String payload;
 
@@ -119,16 +129,28 @@ public class Controller {
             payload = inputField.getText();
         }
 
+        if(mode == WorkingMode.BINARY) {
+            if(inputField.getText().length() != parsedM+1) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, String.format("Vector length should be '%d', but is '%d'", parsedM+1, inputField.getText().length()), ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
+            doBinaryTransfer(parsedM, parsedErrorRate, inputField.getText());
+            return;
+        }
+        else {
+            binaryPane.setVisible(false);
+        }
+
         Communicator codedCommunicator = new CodedCommunicator(channel, encoder, decoder, parsedM);
         try {
-            byte[] result = operator.sendWithCommunicator(mode, payload, codedCommunicator, parsedErrorRate/100);
-            byte[] uncodedResult = operator.sendWithCommunicator(mode, payload, uncodedCommunicator, parsedErrorRate/100);
+            byte[] result = operator.sendWithCommunicator(mode, payload, codedCommunicator, parsedErrorRate);
+            byte[] uncodedResult = operator.sendWithCommunicator(mode, payload, uncodedCommunicator, parsedErrorRate);
 
-            if(mode.equals(WorkingMode.BITMAP)) {
+            if (mode.equals(WorkingMode.BITMAP)) {
                 codedImage.setImage(new Image(new ByteArrayInputStream(result)));
                 uncodedImage.setImage(new Image(new ByteArrayInputStream(uncodedResult)));
-            }
-            else {
+            } else {
                 codedTextResultArea.setText(new String(result));
                 uncodedTextResultArea.setText(new String(uncodedResult));
             }
@@ -137,10 +159,75 @@ public class Controller {
         }
     }
 
-    public void imageRadioClick() {
-        if(!imageRadio.isSelected()) {
-            return;
+    // TODO: This is a quick hack, cobbled together without any thought, sorry
+    private void doBinaryTransfer(int m, double errorRate, String text) {
+        boolean[] vector = new boolean[text.length()];
+        for(int i = 0; i < text.length(); i++) {
+            vector[i] = text.charAt(i) == '1';
         }
+        boolean[] encoded = encoder.encode(vector, m);
+        byte[] encodedStringBytes = new byte[encoded.length];
+
+        boolean[] sentThroughChannelString = channel.sendThroughChannel(encoded, errorRate);
+        byte[] sentString = new byte[sentThroughChannelString.length];
+
+
+        for(int i = 0; i < encoded.length; i++) {
+            encodedStringBytes[i] = encoded[i] ? (byte)'1' : (byte)'0';
+        }
+        for(int i = 0; i < sentThroughChannelString.length; i++) {
+            sentString[i] = sentThroughChannelString[i] ? (byte)'1' : (byte)'0';
+        }
+
+        String encodedString = new String(encodedStringBytes);
+        codedBinary.setText(encodedString);
+        String encodedStringWithErrors = new String(sentString);
+        sentThroughChannel.setText(encodedStringWithErrors);
+
+        List<Integer> errorIndexes = getErrorPositions(encodedString, encodedStringWithErrors);
+        if(errorIndexes.isEmpty()) {
+            numberOfErrors.setText("No errors occurred");
+        }
+        else {
+            numberOfErrors.setText(String.format("%d errors occurred in positions: %s", errorIndexes.size(), StringUtils.join(errorIndexes, ',')));
+        }
+    }
+
+    private List<Integer> getErrorPositions(String s1, String s2) {
+        List<Integer> errors = new ArrayList<>();
+        int minLength = s1.length() > s2.length() ? s2.length() : s1.length();
+        for(int i = 0; i< minLength; i++) {
+            if(s1.charAt(i) != s2.charAt(i)) {
+                errors.add(i+1); // positions start from 1, I know - sad
+            }
+        }
+        return errors;
+    }
+
+    public void pressDecodeButton() throws IOException {
+        // This is very bad, but it works
+        String text = sentThroughChannel.getText();
+        int m = Integer.parseInt(mField.getText());
+
+        boolean[] vector = new boolean[text.length()];
+        for(int i = 0; i < text.length(); i++) {
+            vector[i] = text.charAt(i) == '1';
+        }
+        boolean[] decoded = decoder.decode(vector, m);
+        byte[] decodedStringBytes = new byte[decoded.length];
+
+        for(int i = 0; i < decoded.length; i++) {
+            decodedStringBytes[i] = decoded[i] ? (byte)'1' : (byte)'0';
+        }
+
+        double parsedErrorRate = Double.parseDouble(errorField.getText()) / 100;
+        byte[] uncodedStringBytes = operator.sendWithCommunicator(WorkingMode.BINARY, inputField.getText(), uncodedCommunicator, parsedErrorRate);
+        codedTextResultArea.setText(new String(decodedStringBytes));
+        uncodedTextResultArea.setText(new String(uncodedStringBytes));
+    }
+
+    public void imageRadioClick() {
+        binaryPane.setVisible(false);
         selectFileButton.setVisible(true);
         codedImage.setVisible(true);
         uncodedImage.setVisible(true);
@@ -150,14 +237,19 @@ public class Controller {
 
     public void textRadioClick() {
         nonImageButtonClick(textRadio);
+        binaryPane.setVisible(false);
     }
 
     public void binaryRadioClick() {
         nonImageButtonClick(binaryRadio);
+        if(binaryRadio.isSelected()) {
+            binaryPane.setVisible(true);
+            return;
+        }
     }
 
     public void nonImageButtonClick(RadioButton button) {
-        if(!button.isSelected()) {
+        if (!button.isSelected()) {
             return;
         }
         selectFileButton.setVisible(false);

@@ -26,7 +26,8 @@ public class CodedCommunicator implements Communicator {
 
     /**
      * Transmits coded bytes through a channel with given error rate and then returns the received uncoded data
-     * @param bytes byte array of data that is to be transmitted
+     *
+     * @param bytes     byte array of data that is to be transmitted
      * @param errorRate error rate of channel
      * @return received data
      */
@@ -39,7 +40,8 @@ public class CodedCommunicator implements Communicator {
 
     /**
      * Transmits coded bits through a channel with given error rate and then returns the received uncoded data
-     * @param bits bit array of data that is to be transmitted
+     *
+     * @param bits      bit array of data that is to be transmitted
      * @param errorRate error rate of channel
      * @return received data
      */
@@ -59,9 +61,9 @@ public class CodedCommunicator implements Communicator {
 
     protected Stream<Object> getBitStream(boolean[] bits, int m) {
         Stream.Builder<Object> streamBuilder = Stream.builder();
-        for (int i = 0; i < bits.length; i+= m+1) {
-            boolean[] bools = new boolean[m+1];
-            int length = i + m + 1 > bits.length ? bits.length - i : m+1;
+        for (int i = 0; i < bits.length; i += m + 1) {
+            boolean[] bools = new boolean[m + 1];
+            int length = i + m + 1 > bits.length ? bits.length - i : m + 1;
             System.arraycopy(bits, i, bools, 0, length);
 
             streamBuilder.add(bools);
