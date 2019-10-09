@@ -1,2 +1,2 @@
 @echo off
-mvn clean install
+mvnw clean install
