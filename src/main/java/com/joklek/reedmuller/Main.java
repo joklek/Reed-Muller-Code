@@ -20,16 +20,15 @@ public class Main {
     private static List<String> argumentFlags = Arrays.asList("-f", "-b", "-m", "-e", "-u", "-i");
     private static Map<String, WorkingMode> workingModeFlags;
     static {
-        Map<String, WorkingMode> aMap = new HashMap<>();
-        aMap.put("-f", WorkingMode.FILE);
-        aMap.put("-i", WorkingMode.BITMAP);
-        aMap.put("-b", WorkingMode.BINARY);
-        workingModeFlags = Collections.unmodifiableMap(aMap);
+        workingModeFlags = Map.of(
+                "-f", WorkingMode.FILE,
+                "-i", WorkingMode.BITMAP,
+                "-b", WorkingMode.BINARY);
     }
 
     public static void main(String[] args) throws IOException {
 
-        if(args[0].equals("-gui")) {
+        if(args.length != 0 && args[0].equals("-gui")) {
             GuiLauncher.main(new String[0]);
             return;
         }
