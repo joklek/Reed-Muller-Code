@@ -90,24 +90,6 @@ public class MatrixTest {
         assertThat(matrix.multiply(termMatrix), is(sumMatrix));
     }
 
-
-    private static Stream<Arguments> matrixCartesianMultiplierAndResult() {
-        return Stream.of(
-                arguments(new int[][]{{1, 1}, {1, -1}}, new int[][]{{1, 0}, {0, 1}}, new int[][]{{1, 0, 1, 0}, {0 , 1, 0 ,1}, {1, 0 , -1, 0}, {0, 1, 0, -1}}),
-                arguments(new int[][]{{1, 0}, {0, 1}}, new int[][]{{1, 1}, {1, -1}}, new int[][]{{1, 1, 0, 0}, {1 , -1, 0 ,0}, {0, 0 , 1, 1}, {0, 0, 1, -1}})
-        );
-    }
-    @ParameterizedTest
-    @MethodSource("matrixCartesianMultiplierAndResult")
-    void shouldCartesianMultiplyCorrectly(int[][] array, int[][] term, int[][] result) {
-        Matrix matrix = new Matrix(array);
-        Matrix termMatrix = new Matrix(term);
-        Matrix sumMatrix = new Matrix(result);
-
-        assertThat(matrix.kroneckerProduct(termMatrix), is(sumMatrix));
-    }
-
-
     @Test
     void shouldFillNewMatrixWithZeroes() {
         int length = 3;

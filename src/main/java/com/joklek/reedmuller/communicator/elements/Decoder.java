@@ -12,13 +12,11 @@ import static java.lang.Math.pow;
 
 public class Decoder {
 
-    private final Matrix hMatrix;
-    private final Map<Integer, Matrix> iMatrices;
+    protected final Matrix hMatrix;
     private final Map<Pair<Integer, Integer>, Matrix> hMatrices;
 
     public Decoder() {
         hMatrix = new Matrix(new int[][]{{1, 1}, {1, -1}});
-        iMatrices = new HashMap<>();
         hMatrices = new HashMap<>();
     }
 
@@ -34,7 +32,7 @@ public class Decoder {
         int[] vectorSwitched = switchZeroToMinusOne(integers);
         Matrix previousW = new Matrix(new int[][]{vectorSwitched});
         for (int i = 1; i <= m; i++) {
-            previousW = generateHMatrix(i, m).multiply(previousW.transpose()).transpose();
+            previousW = generateHadamardMatrix(i, m).multiply(previousW.transpose()).transpose();
         }
 
         int[] multipliedResult = previousW.getData()[0];
@@ -97,30 +95,50 @@ public class Decoder {
      *
      * @return 2^m×2^m sized Hadamard matrix for i
      */
-    private Matrix generateHMatrix(int i, int m) {
+    private Matrix generateHadamardMatrix(int i, int m) {
         Pair<Integer, Integer> pair = Pair.of(m, i);
         return hMatrices.computeIfAbsent(pair, key -> {
             int powerOfI = (int) pow(2, m - i);
             int powerOfI2 = (int) pow(2, i - 1);
-            return generateIMatrix(powerOfI)
-                    .kroneckerProduct(hMatrix)
-                    .kroneckerProduct(generateIMatrix(powerOfI2));
+
+            Matrix multiplied = kroeneckerProductIdentityWithMatrix(hMatrix, powerOfI);
+            return kroneckerProductMatrixWithIdentity(multiplied, powerOfI2);
         });
     }
 
-    /**
-     * Generates n-sized identity matrix
-     *
-     * @param n size of matrix
-     * @return n×n sized identity matrix
-     */
-    private Matrix generateIMatrix(int n) {
-        return iMatrices.computeIfAbsent(n, key -> {
-            int[][] iArray = new int[n][n];
-            for (int i = 0; i < n; i++) {
-                iArray[i][i] = 1;
+    protected Matrix kroeneckerProductIdentityWithMatrix(Matrix matrix, int sizeOfIdentity) {
+        int hostHeight = matrix.getHeight();
+        int hostLength = matrix.getLength();
+
+        int newHeight = sizeOfIdentity * hostHeight;
+        int newLength = sizeOfIdentity * hostLength;
+        int[][] newArray = new int[newHeight][newLength];
+        for(int i = 0; i < newHeight; i++) {
+            for(int j = 0; j < newLength; j++) {
+                int valueOfCell = i/hostHeight == j/hostLength ? 1 : 0;
+                if(valueOfCell == 0) {
+                    continue;            // this is a optimisation, probably unnecessary
+                }
+                newArray[i][j] = matrix.getData()[i%hostHeight][j%hostLength] * valueOfCell;
             }
-            return new Matrix(iArray);
-        });
+        }
+        return new Matrix(newArray);
+    }
+
+    protected Matrix kroneckerProductMatrixWithIdentity(Matrix matrix, int identitySize) {
+
+        int newHeight = matrix.getHeight() * identitySize;
+        int newLength = matrix.getLength() * identitySize;
+        int[][] newArray = new int[newHeight][newLength];
+        for(int i = 0; i < newHeight; i++) {
+            for(int j = 0; j < newLength; j++) {
+                int valueOfCell = matrix.getData()[i/identitySize][j/identitySize];
+                if(valueOfCell == 0) {
+                    continue;            // this is a optimisation, probably unnecessary
+                }
+                newArray[i][j] = i%identitySize == j%identitySize ? valueOfCell : 0;
+            }
+        }
+        return new Matrix(newArray);
     }
 }

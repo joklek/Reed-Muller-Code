@@ -66,30 +66,6 @@ public class Matrix {
     }
 
     /**
-     * kronecker Product matrix
-     * @param matrix to be multiplied by
-     * @return new matrix that is the product of kroneckerProduct multiplication
-     */
-    public Matrix kroneckerProduct(Matrix matrix) {
-        int hostHeight = matrix.getHeight();
-        int hostLength = matrix.getLength();
-
-        int newHeight = this.height * hostHeight;
-        int newLength = length * hostLength;
-        int[][] newArray = new int[newHeight][newLength];
-        for(int i = 0; i < newHeight; i++) {
-            for(int j = 0; j < newLength; j++) {
-                int valueOfCell = data[i/hostHeight][j/hostLength];
-                if(valueOfCell == 0) {
-                    continue;            // this is a optimisation, probably unnecessary
-                }
-                newArray[i][j] = matrix.getData()[i%hostHeight][j%hostLength] * valueOfCell;
-            }
-        }
-        return new Matrix(newArray);
-    }
-
-    /**
      * Matrix transposition. Rows become columns, and columns become rows
      * @return new transposed matrix
      */
