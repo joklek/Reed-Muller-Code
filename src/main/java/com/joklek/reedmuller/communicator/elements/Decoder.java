@@ -36,8 +36,13 @@ public class Decoder {
         }
 
         int[] multipliedResult = previousW.getData()[0];
-        int max = Arrays.stream(multipliedResult).min().getAsInt();
-        int min = Arrays.stream(multipliedResult).max().getAsInt();
+
+        int min = multipliedResult[0];
+        int max = multipliedResult[0];
+        for (int i : multipliedResult) {
+            if(i > max) max = i;
+            if(i < min) min = i;
+        }
 
         int number = Math.abs(max) > Math.abs(min) ? max : min;
         int sign = number > 0 ? 1 : 0;
