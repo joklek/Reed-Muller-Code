@@ -19,7 +19,7 @@ public class Encoder {
      * @return boolean array of the encoded vector
      */
     public boolean[] encode(int[] vector, int m) {
-        Matrix multiplied = generator.generateGenerativeMatrixForM(m).transpose()
+        Matrix multiplied = generator.generateGenerativeMatrixForM(m)
                 .multiply(new Matrix(new int[][]{vector}).transpose()).transpose();
         return BooleanUtils.boolArrayFromIntArray(multiplied.getData()[0]);
     }

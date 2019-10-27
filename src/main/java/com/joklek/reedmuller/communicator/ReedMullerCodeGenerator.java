@@ -21,11 +21,11 @@ public class ReedMullerCodeGenerator {
      */
     public Matrix generateGenerativeMatrixForM(int m) {
         return matrices.computeIfAbsent(m, key -> {
-            int height = m + 1;
-            int length =  (int) pow(2, m);
+            int length = m + 1;
+            int height =  (int) pow(2, m);
             Matrix matrix = new Matrix(height, length);
-            for(int i = 0; i < height; i++) {
-                for(int j = 0; j < length; j++) {
+            for(int i = 0; i < length; i++) {
+                for(int j = 0; j < height; j++) {
                     int number;
                     if (i == 0) {
                         number = 1;
@@ -33,7 +33,7 @@ public class ReedMullerCodeGenerator {
                     else {
                         number = (j / ((int) pow(2, i - 1))) % 2;
                     }
-                    matrix.getData()[i][j] = number;
+                    matrix.getData()[j][i] = number;
                 }
             }
             return matrix;
