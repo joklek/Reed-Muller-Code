@@ -110,6 +110,15 @@ public class Decoder {
         });
     }
 
+    /**
+     * This is an optimised variant of an Identity matrices I kroenecker product with another Matrix M. I × M
+     * 1 0 0 0
+     * 0 1 0 0
+     * 0 0 1 0
+     * 0 0 0 1
+     * Identity matrix is easy to predict as it only has 1 in it's diagonal and 0 elsewhere.
+     * Instead of generating Identity matrices I tried to optimise the korenecker product function
+     */
     protected Matrix kroeneckerProductIdentityWithMatrix(Matrix matrix, int sizeOfIdentity) {
         int hostHeight = matrix.getHeight();
         int hostLength = matrix.getLength();
@@ -119,16 +128,25 @@ public class Decoder {
         int[][] newArray = new int[newHeight][newLength];
         for(int i = 0; i < newHeight; i++) {
             for(int j = 0; j < newLength; j++) {
-                int valueOfCell = i/hostHeight == j/hostLength ? 1 : 0;
-                if(valueOfCell == 0) {
-                    continue;            // this is a optimisation, probably unnecessary
+                boolean isInDiagonalIdentityLine = i/hostHeight == j/hostLength;  // Originally this would access I.data[i/hostHeight][j/hostLength]; That means we get 1 if we're on the diagonal, and 0 elsewhere
+                if(!isInDiagonalIdentityLine) {
+                    continue; // this is a optimisation, probably unnecessary. Doing this, we avoid getting the value from the other matrix and multiplying it by zero. We assume that the Matrix is set to 0 by default
                 }
-                newArray[i][j] = matrix.getData()[i%hostHeight][j%hostLength] * valueOfCell;
+                newArray[i][j] = matrix.getData()[i%hostHeight][j%hostLength];  // If we're on the diagonal, multiplication by 1 is unnecessary as the value would stay the same
             }
         }
         return new Matrix(newArray);
     }
 
+    /**
+     * This is an optimised variant of a Matrix M kroenecker product with an Identity matrice I. M × I
+     * 1 0 0 0
+     * 0 1 0 0
+     * 0 0 1 0
+     * 0 0 0 1
+     * Identity matrix is easy to predict as it only has 1 in it's diagonal and 0 elsewhere.
+     * Instead of generating Identity matrices I tried to optimise the korenecker product function
+     */
     protected Matrix kroneckerProductMatrixWithIdentity(Matrix matrix, int identitySize) {
 
         int newHeight = matrix.getHeight() * identitySize;
@@ -138,9 +156,9 @@ public class Decoder {
             for(int j = 0; j < newLength; j++) {
                 int valueOfCell = matrix.getData()[i/identitySize][j/identitySize];
                 if(valueOfCell == 0) {
-                    continue;            // this is a optimisation, probably unnecessary
+                    continue; // this is a optimisation, probably unnecessary. Doing this, we avoid getting the value from the other matrix and multiplying it by zero. We assume that the Matrix is set to 0 by default
                 }
-                newArray[i][j] = i%identitySize == j%identitySize ? valueOfCell : 0;
+                newArray[i][j] = i%identitySize == j%identitySize ? valueOfCell : 0; // Originally this would do this I.getData()[i%hostHeight][j%hostLength] * valueOfCell; Here we optimise it, so if we're not on the diagonal, the value becomes zero, else it is the indended value (as it would be multiplied by 1)
             }
         }
         return new Matrix(newArray);
