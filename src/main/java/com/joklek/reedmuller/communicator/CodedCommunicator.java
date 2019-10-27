@@ -49,9 +49,8 @@ public class CodedCommunicator implements Communicator {
     @Override
     public boolean[] transmitAndReceiveCodedBits(boolean[] bits, double errorRate) {
         int originalSize = bits.length;
-        Stream<Object> bitStream = getBitStream(bits, m);
-        List<Boolean> decodedBools = bitStream
-                .map(vector -> encoder.encode((boolean[]) vector, m))
+        List<Boolean> decodedBools = getBitStream(bits, m)
+                .map(vector -> encoder.encode(vector, m))
                 .map(encoded -> channel.sendThroughChannel(encoded, errorRate))
                 .map(channelized -> decoder.decode(channelized, m))
                 .map(BooleanUtils::boxArray)
@@ -60,8 +59,8 @@ public class CodedCommunicator implements Communicator {
         return BooleanUtils.listToArray(decodedBools.subList(0, originalSize));
     }
 
-    protected Stream<Object> getBitStream(boolean[] bits, int m) {
-        List<Object> listOfBits = new ArrayList<>();
+    protected Stream<boolean[]> getBitStream(boolean[] bits, int m) {
+        List<boolean[]> listOfBits = new ArrayList<>();
         for (int i = 0; i < bits.length; i += m + 1) {
             boolean[] bools = new boolean[m + 1];
             int length = i + m + 1 > bits.length ? bits.length - i : m + 1;
