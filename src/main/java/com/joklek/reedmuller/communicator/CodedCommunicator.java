@@ -5,6 +5,7 @@ import com.joklek.reedmuller.communicator.elements.Channel;
 import com.joklek.reedmuller.communicator.elements.Decoder;
 import com.joklek.reedmuller.communicator.elements.Encoder;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,22 +54,22 @@ public class CodedCommunicator implements Communicator {
                 .map(vector -> encoder.encode((boolean[]) vector, m))
                 .map(encoded -> channel.sendThroughChannel(encoded, errorRate))
                 .map(channelized -> decoder.decode(channelized, m))
-                .map(decoded -> BooleanUtils.boxArray(decoded))
-                .flatMap(decoded -> Arrays.stream(decoded))
+                .map(BooleanUtils::boxArray)
+                .flatMap(Arrays::stream)
                 .collect(Collectors.toList());
         return BooleanUtils.listToArray(decodedBools.subList(0, originalSize));
     }
 
     protected Stream<Object> getBitStream(boolean[] bits, int m) {
-        Stream.Builder<Object> streamBuilder = Stream.builder();
+        List<Object> listOfBits = new ArrayList<>();
         for (int i = 0; i < bits.length; i += m + 1) {
             boolean[] bools = new boolean[m + 1];
             int length = i + m + 1 > bits.length ? bits.length - i : m + 1;
             System.arraycopy(bits, i, bools, 0, length);
 
-            streamBuilder.add(bools);
+            listOfBits.add(bools);
         }
 
-        return streamBuilder.build();
+        return listOfBits.parallelStream();
     }
 }

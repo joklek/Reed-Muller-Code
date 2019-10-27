@@ -4,9 +4,8 @@ import com.joklek.reedmuller.BooleanUtils;
 import com.joklek.reedmuller.datastructure.Matrix;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.Math.pow;
 
@@ -17,7 +16,7 @@ public class Decoder {
 
     public Decoder() {
         hMatrix = new Matrix(new int[][]{{1, 1}, {1, -1}});
-        hMatrices = new HashMap<>();
+        hMatrices = new ConcurrentHashMap<>();
     }
 
     /**

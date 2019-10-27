@@ -2,8 +2,8 @@ package com.joklek.reedmuller.communicator;
 
 import com.joklek.reedmuller.datastructure.Matrix;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.Math.pow;
 
@@ -12,7 +12,7 @@ public class ReedMullerCodeGenerator {
     private Map<Integer, Matrix> matrices;
 
     public ReedMullerCodeGenerator() {
-        matrices = new HashMap<>();
+        matrices = new ConcurrentHashMap<>();
     }
 
     /**

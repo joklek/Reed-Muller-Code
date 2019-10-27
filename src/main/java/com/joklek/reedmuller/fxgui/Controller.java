@@ -22,6 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,6 +115,7 @@ public class Controller {
         if (inputField.getText() == null || inputField.getText().isEmpty()) {
             return;
         }
+        LocalDateTime startTime = LocalDateTime.now();
 
         WorkingMode mode = setWorkingMode();
         int parsedM = Integer.parseInt(mField.getText());
@@ -157,6 +160,9 @@ public class Controller {
 
         } catch (IOException e1) {
         }
+        LocalDateTime endTime = LocalDateTime.now();
+        Duration timeSpent = Duration.between(startTime, endTime);
+        System.out.println(timeSpent);
     }
 
     // TODO: This is a quick hack, cobbled together without any thought, sorry
