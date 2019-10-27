@@ -40,9 +40,8 @@ public class CodedCommunicatorTest {
         boolean[] bools1 = new boolean[]{false, true, false};
         boolean[] bools2 = new boolean[]{true, false, false};
 
-        List<Object> collected = communicator.getBitStream(bools, m)
-                .collect(Collectors.toList());
-        assertThat(((boolean[])collected.get(0)).length, is(m + 1));
+        List<boolean[]> collected = communicator.splitBitsForEncoding(bools, m);
+        assertThat((collected.get(0)).length, is(m + 1));
         assertThat(collected.get(0), is(bools1));
         assertThat(collected.get(1), is(bools2));
     }

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CodedCommunicator implements Communicator {
 
@@ -49,7 +48,8 @@ public class CodedCommunicator implements Communicator {
     @Override
     public boolean[] transmitAndReceiveCodedBits(boolean[] bits, double errorRate) {
         int originalSize = bits.length;
-        List<Boolean> decodedBools = getBitStream(bits, m)
+        List<Boolean> decodedBools = splitBitsForEncoding(bits, m)
+                .parallelStream()
                 .map(vector -> encoder.encode(vector, m))
                 .map(encoded -> channel.sendThroughChannel(encoded, errorRate))
                 .map(channelized -> decoder.decode(channelized, m))
@@ -59,7 +59,10 @@ public class CodedCommunicator implements Communicator {
         return BooleanUtils.listToArray(decodedBools.subList(0, originalSize));
     }
 
-    protected Stream<boolean[]> getBitStream(boolean[] bits, int m) {
+    /**
+     * We need to split our bit array into m+1 sized arrays for the encoding to work
+     */
+    List<boolean[]> splitBitsForEncoding(boolean[] bits, int m) {
         List<boolean[]> listOfBits = new ArrayList<>();
         for (int i = 0; i < bits.length; i += m + 1) {
             boolean[] bools = new boolean[m + 1];
@@ -68,7 +71,6 @@ public class CodedCommunicator implements Communicator {
 
             listOfBits.add(bools);
         }
-
-        return listOfBits.parallelStream();
+        return listOfBits;
     }
 }
