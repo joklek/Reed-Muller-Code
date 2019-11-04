@@ -11,7 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-public class BooleanUtilsTest {
+class BooleanUtilsTest {
 
     private static Stream<Arguments> intArrayAndExpectedBoolArray() {
         return Stream.of(

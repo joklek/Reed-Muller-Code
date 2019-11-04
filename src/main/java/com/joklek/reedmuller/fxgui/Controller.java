@@ -201,7 +201,7 @@ public class Controller {
 
     private List<Integer> getErrorPositions(String s1, String s2) {
         List<Integer> errors = new ArrayList<>();
-        int minLength = s1.length() > s2.length() ? s2.length() : s1.length();
+        int minLength = Math.min(s1.length(), s2.length());
         for(int i = 0; i< minLength; i++) {
             if(s1.charAt(i) != s2.charAt(i)) {
                 errors.add(i+1); // positions start from 1, I know - sad
