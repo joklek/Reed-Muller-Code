@@ -20,7 +20,7 @@ public class Matrix {
     }
 
     /**
-     * Generates new matrix from given 2d array
+     * Generates a new matrix from given 2d array
      * @param data a 2d array of data
      */
     public Matrix(int[][] data) {
@@ -46,23 +46,25 @@ public class Matrix {
     }
 
     /**
-     * Multiplies current matrix with another and returns new matrix. Current matrix length should be equal to given matrix height. X×Y multiplied by Z×W, should have Y == Z
+     * Multiplies current matrix with another and returns a new matrix. Current matrix length should be equal to given matrix height. X×Y multiplied by Z×W, should have Y == Z
      * @param matrixToMultiplyBy the matrix that the current should be multiplied with
      * @return a new matrix that is the product of matrix multiplication. Dimensions of new matrix (where X×Y is multiplied by Z×W) is X×W
      */
     public Matrix multiply(Matrix matrixToMultiplyBy) {
-        if (length != matrixToMultiplyBy.getHeight()) {
-            throw new IllegalStateException("Matrix dimensions don't match. Length of multiplied matrix should be equal to the multiplier matrix height");
+        if (this.length != matrixToMultiplyBy.getHeight()) {
+            throw new IllegalStateException(String.format("Matrix dimensions don't match. Length of multiplied matrix should be equal to the multiplier matrix height, but they are %d and %d", length, matrixToMultiplyBy.getHeight()));
         }
-        Matrix newMatrix = new Matrix(height, matrixToMultiplyBy.getLength());
-        for (int i = 0; i < newMatrix.getHeight(); i++) {
-            for (int j = 0; j < newMatrix.getLength(); j++) {
-                for (int k = 0; k < length; k++) {
-                    newMatrix.data[i][j] += (data[i][k] * matrixToMultiplyBy.getData()[k][j]);
+        int newHeight = this.height;
+        int newLength = matrixToMultiplyBy.getLength();
+        int[][] newMatrix = new int[newHeight][newLength];
+        for (int i = 0; i < newHeight; i++) {
+            for (int j = 0; j < newLength; j++) {
+                for (int k = 0; k < this.length; k++) {
+                    newMatrix[i][j] += (data[i][k] * matrixToMultiplyBy.getData()[k][j]);
                 }
             }
         }
-        return newMatrix;
+        return new Matrix(newMatrix);
     }
 
     /**
@@ -70,13 +72,13 @@ public class Matrix {
      * @return new transposed matrix
      */
     public Matrix transpose() {
-        Matrix transposed = new Matrix(length, height);
+        int[][] transposed = new int[length][height];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < length; j++) {
-                transposed.data[j][i] = this.data[i][j];
+                transposed[j][i] = this.data[i][j];
             }
         }
-        return transposed;
+        return new Matrix(transposed);
     }
 
     @Override

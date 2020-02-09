@@ -41,21 +41,31 @@ public final class BooleanUtils {
     }
 
     /**
-     * Converts boolean array, to int array. For example this could be a transformation [true, true false] -> [1, 1, 0]
+     * Converts a boolean array, to an int array. For example this could be a transformation [true, true false] -> [1, 1, 0]
      * @param boolArray boolean array that is to be converted
      * @return converted integer array
      */
     public static int[] intArrayFromBoolArray(boolean[] boolArray) {
+        return intArrayFromBoolArray(boolArray, 1, 0);
+    }
+
+    /**
+     * Converts a boolean array, to an int array. For example this could be a transformation [true, true false] -> [trueVal, trueVal, falseVal].
+     * If trueVal = 1 and falseVal = 0. then [true, true false] -> [1, 1, 0]
+     * @param boolArray boolean array that is to be converted
+     * @return converted integer array
+     */
+    public static int[] intArrayFromBoolArray(boolean[] boolArray, int trueVal, int falseVal) {
         int length = boolArray.length;
         int[] arr = new int[length];
         for (int i = 0; i < length; i++) {
-            arr[i] = boolArray[i] ? 1 : 0;
+            arr[i] = boolArray[i] ? trueVal : falseVal;
         }
         return arr;
     }
 
     /**
-     * Boxed a regular boolean array to a boxed boolean
+     * Boxing a regular boolean array to a boxed boolean
      * @param unboxed unboxed boolean array
      * @return boxed boolean array
      */

@@ -19,10 +19,10 @@ To run the program use
 > runReedMuller <commandLineArguments>
 ```
 
-The command line arguements are these:
+The command line arguments are these:
 
 ##### Required
-* -e <DOUBLE[0,1]> "-e 0.1". This is the channels error rate. 
+* -e <DOUBLE[0,1]> "-e 0.1". This is the channel's error rate. 
 * -m <INTEGER>, e.g. "-m 4". This is the m for code generation.  Cannot be used with -u
 * -u, This indicates that no coding should take place. Cannot be used with -m
 
@@ -30,7 +30,7 @@ if no valid flags are entered after the required arguments, all the text is fed 
 
 #### Optional (only one can be used per command)
 * -f <FILE_NAME>, e.g. "-f test.txt". This give program the file and outputs it with ".out" extension.
-* -b <binary vector representation> "-b 01010001111". This prints out the binary representation of the decoded vector
+* -b <binary vector representation> "-b 01010001111". This prints out the binary representation of the decoded vector.
 
 #### Examples
 To run program on input text you could write
