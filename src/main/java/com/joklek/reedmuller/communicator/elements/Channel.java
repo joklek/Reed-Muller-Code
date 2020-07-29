@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 
 public class Channel {
 
-    private Random rand = new Random();
+    private final Random rand = new Random();
 
     /**
      * Imitates a noisy channel
@@ -22,7 +22,7 @@ public class Channel {
 
         return IntStream.range(0, inputWord.length)
                 .mapToObj(x -> inputWord[x])
-                .map(bit -> rand.nextDouble() < rateOfErrors ? !bit : bit)
+                .map(bit -> (rand.nextDouble() < rateOfErrors) != bit)
                 .collect(BooleanUtils.TO_BOOLEAN_ARRAY);
     }
 }

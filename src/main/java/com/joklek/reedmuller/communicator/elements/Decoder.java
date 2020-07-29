@@ -94,7 +94,7 @@ public class Decoder {
         Pair<Integer, Integer> pair = Pair.of(m, i);
         return hMatrices.computeIfAbsent(pair, key -> {
             int powerOfI = (int) pow(2, m - i);
-            int powerOfI2 = (int) pow(2, i - 1);
+            int powerOfI2 = (int) pow(2, i - 1.0);
 
             Matrix multiplied = kroeneckerProductIdentityWithMatrix(hMatrix, powerOfI);
             return kroneckerProductMatrixWithIdentity(multiplied, powerOfI2);
@@ -117,14 +117,10 @@ public class Decoder {
         int newHeight = sizeOfIdentity * hostHeight;
         int newLength = sizeOfIdentity * hostLength;
         int[][] newArray = new int[newHeight][newLength];
+        // Optimized loop, will only access cells where the identity matrix has values
         for(int i = 0; i < newHeight; i++) {
-            for(int j = 0; j < newLength; j++) {
-                boolean isInDiagonalIdentityLine = i/hostHeight == j/hostLength;  // Originally this would access I.data[i/hostHeight][j/hostLength]; That means we get 1 if we're on the diagonal, and 0 elsewhere
-                if(!isInDiagonalIdentityLine) {
-                    continue; // this is an optimisation, probably unnecessary.
-                    // Doing this, we avoid getting the value from the other matrix and multiplying it by zero. We assume that the Matrix is set to 0 by default
-                }
-                newArray[i][j] = matrix.getData()[i%hostHeight][j%hostLength];  // If we're on the diagonal, multiplication by 1 is unnecessary as the value would stay the same
+            for(int j = (i/hostHeight)*hostLength; i/hostHeight == j/hostLength; j++) {
+                newArray[i][j] = matrix.getData()[i%hostHeight][j%hostLength];
             }
         }
         return new Matrix(newArray);

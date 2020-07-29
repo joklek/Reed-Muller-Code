@@ -7,24 +7,24 @@ import com.joklek.reedmuller.communicator.UncodedCommunicator;
 import com.joklek.reedmuller.communicator.elements.Channel;
 import com.joklek.reedmuller.communicator.elements.Decoder;
 import com.joklek.reedmuller.communicator.elements.Encoder;
-import com.joklek.reedmuller.fxgui.GuiLauncher;
 import com.joklek.reedmuller.errors.ErrorMessages;
+import com.joklek.reedmuller.fxgui.GuiLauncher;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 @SuppressWarnings("squid:S106")
 public class Main {
 
-    private static List<String> argumentFlags = Arrays.asList("-f", "-b", "-m", "-e", "-u", "-i");
-    private static Map<String, WorkingMode> workingModeFlags;
-    static {
-        workingModeFlags = Map.of(
+    private static final List<String> ARGUMENT_FLAGS = Arrays.asList("-f", "-b", "-m", "-e", "-u", "-i");
+    private static final Map<String, WorkingMode> WORKING_MODE_FLAGS = Map.of(
                 "-f", WorkingMode.FILE,
                 "-i", WorkingMode.BITMAP,
                 "-b", WorkingMode.BINARY);
-    }
 
     public static void main(String[] args) throws IOException {
 
@@ -54,7 +54,7 @@ public class Main {
         WorkingMode workingMode = null;
         String payload = "";
 
-        for(Map.Entry<String, WorkingMode> entry: workingModeFlags.entrySet()) {
+        for(Map.Entry<String, WorkingMode> entry: WORKING_MODE_FLAGS.entrySet()) {
             if (arguments.containsKey(entry.getKey())) {
                 workingMode = entry.getValue();
                 payload = arguments.get(entry.getKey());
@@ -136,7 +136,7 @@ public class Main {
         Map<String, String> map = new HashMap<>();
 
         List<String> argList = new ArrayList<>(Arrays.asList(args));
-        for (String argFlag: argumentFlags) {
+        for (String argFlag: ARGUMENT_FLAGS) {
             int index = argList.indexOf(argFlag);
             if (index >= 0) {
                 String argValue = !argFlag.equals("-u") && argList.size() > index + 1 ? argList.get(index + 1) : null;

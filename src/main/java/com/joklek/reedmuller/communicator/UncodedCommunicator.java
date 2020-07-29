@@ -11,7 +11,6 @@ public class UncodedCommunicator implements Communicator {
         this.channel = channel;
     }
 
-
     /**
      * Transmits bytes through a channel with given error rate and then returns the received data
      * @param bytes byte array of data that is to be transmitted
@@ -24,7 +23,6 @@ public class UncodedCommunicator implements Communicator {
         boolean[] decodedBools = transmitAndReceiveCodedBits(listOfBools, errorRate);
         return BooleanUtils.getBytes(decodedBools);
     }
-
 
     /**
      * Transmits bits through a channel with given error rate and then returns the received data

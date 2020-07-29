@@ -9,7 +9,7 @@ import static java.lang.Math.pow;
 
 public class ReedMullerCodeGenerator {
 
-    private Map<Integer, Matrix> matrices;
+    private final Map<Integer, Matrix> matrices;
 
     public ReedMullerCodeGenerator() {
         matrices = new ConcurrentHashMap<>();
@@ -31,7 +31,7 @@ public class ReedMullerCodeGenerator {
                         number = 1;
                     }
                     else {
-                        number = (j / ((int) pow(2, i - 1))) % 2;
+                        number = (j / ((int) pow(2, i - 1.0))) % 2;
                     }
                     matrix.getData()[j][i] = number;
                 }

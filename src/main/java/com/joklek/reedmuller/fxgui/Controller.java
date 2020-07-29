@@ -250,7 +250,6 @@ public class Controller {
         nonImageButtonClick(binaryRadio);
         if(binaryRadio.isSelected()) {
             binaryPane.setVisible(true);
-            return;
         }
     }
 
