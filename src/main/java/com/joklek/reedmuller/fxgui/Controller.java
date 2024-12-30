@@ -159,6 +159,7 @@ public class Controller {
             }
 
         } catch (IOException e1) {
+            System.out.println(e1);
         }
         LocalDateTime endTime = LocalDateTime.now();
         Duration timeSpent = Duration.between(startTime, endTime);
